@@ -50,7 +50,6 @@ func TestSetenv(t *testing.T) {
 		t.Fatal("Failed to init pkcs11")
 	}
 	p.Destroy()
-	return
 }
 
 func getSession(p *Ctx, t *testing.T) SessionHandle {
