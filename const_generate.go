@@ -65,7 +65,7 @@ func main() {
 	fmt.Fprintln(out, ")")
 	res, err := format.Source(out.Bytes())
 	if err != nil {
-		fmt.Fprintf(os.Stderr, out.String())
+		fmt.Fprintf(os.Stderr, "%s", out.String())
 		log.Fatal(err)
 	}
 	f, err := os.Create("zconst.go")
