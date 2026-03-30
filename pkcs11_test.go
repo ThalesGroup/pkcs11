@@ -429,7 +429,7 @@ func testEncrypt(t *testing.T, p *Ctx, session SessionHandle, key ObjectHandle, 
 	if decrypted, err = p.Decrypt(session, ciphertext); err != nil {
 		t.Fatalf("Decrypt: %s\n", err)
 	}
-	if bytes.Compare(plaintext, decrypted) != 0 {
+	if !bytes.Equal(plaintext, decrypted) {
 		t.Fatalf("Plaintext mismatch")
 	}
 }
@@ -469,7 +469,7 @@ func testEncryptUpdate(t *testing.T, p *Ctx, session SessionHandle, key ObjectHa
 		t.Fatalf("DecryptFinal: %s\n", err)
 	}
 	decrypted = append(decrypted, output...)
-	if bytes.Compare(plaintext, decrypted) != 0 {
+	if !bytes.Equal(plaintext, decrypted) {
 		t.Fatalf("Plaintext mismatch")
 	}
 }
