@@ -1942,6 +1942,8 @@ func (c *Ctx) AsyncComplete(sh SessionHandle, functionName string) ([]byte, erro
 		return nil, toError(rv)
 	}
 	if result.pValue != nil && result.ulValue > 0 {
+		// C_AsyncComplete allocates pValue; copy into Go memory then free.
+		defer C.free(unsafe.Pointer(result.pValue))
 		return C.GoBytes(unsafe.Pointer(result.pValue), C.int(result.ulValue)), nil
 	}
 	return nil, nil

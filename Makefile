@@ -73,7 +73,7 @@ integration:
 	    exit 1; \
 	fi
 	PKCS11_MODULE="$(PKCS11_MODULE)" PKCS11_PIN="$(PKCS11_PIN)" \
-	    go test -v -run TestML ./...
+	    go test -v -run 'TestPQC|TestV32' ./...
 
 # ── Clean ─────────────────────────────────────────────────────────────────────
 # Removes the downloaded OASIS headers (run `make headers` to restore them).
