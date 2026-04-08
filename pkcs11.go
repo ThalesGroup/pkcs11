@@ -1882,7 +1882,7 @@ func (c *Ctx) WrapKeyAuthenticated(sh SessionHandle, m []*Mechanism, wrappingKey
 		aadPtr = cMessage(aad)
 	}
 
-	// Length query.
+	// Length query: pass nil buffer to discover the required output size.
 	var wrappedKey C.CK_BYTE_PTR
 	var wrappedLen C.CK_ULONG
 	rv := C.WrapKeyAuthenticated(c.ctx, C.CK_SESSION_HANDLE(sh), mech,
@@ -1892,8 +1892,18 @@ func (c *Ctx) WrapKeyAuthenticated(sh SessionHandle, m []*Mechanism, wrappingKey
 	if rv != C.CKR_OK && rv != C.CKR_BUFFER_TOO_SMALL {
 		return nil, toError(rv)
 	}
-	wrapped := make([]byte, wrappedLen)
-	wrappedKey = (*C.CK_BYTE)(unsafe.Pointer(&wrapped[0]))
+
+	// Allocate the output buffer with C.malloc so that &wrappedKey (a Go
+	// pointer to a C.CK_BYTE_PTR) never points into Go-managed heap memory.
+	// Passing a Go pointer to a Go pointer is forbidden by the CGo rules
+	// and causes a runtime panic in Go 1.21+.
+	buf := C.malloc(C.size_t(wrappedLen))
+	if buf == nil {
+		return nil, toError(C.CKR_HOST_MEMORY)
+	}
+	defer C.free(buf)
+	wrappedKey = (*C.CK_BYTE)(buf)
+
 	rv = C.WrapKeyAuthenticated(c.ctx, C.CK_SESSION_HANDLE(sh), mech,
 		C.CK_OBJECT_HANDLE(wrappingKey), C.CK_OBJECT_HANDLE(key),
 		aadPtr, C.CK_ULONG(len(aad)),
@@ -1901,7 +1911,7 @@ func (c *Ctx) WrapKeyAuthenticated(sh SessionHandle, m []*Mechanism, wrappingKey
 	if rv != C.CKR_OK {
 		return nil, toError(rv)
 	}
-	return wrapped[:wrappedLen], nil
+	return C.GoBytes(buf, C.int(wrappedLen)), nil
 }
 
 // UnwrapKeyAuthenticated unwraps a key with AEAD authentication (v3.2 §5.18.7).

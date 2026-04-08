@@ -66,25 +66,34 @@ func NewGCMParams(iv, aad []byte, tagSize int) *GCMParams {
 }
 
 func cGCMParams(p *GCMParams) []byte {
-	params := C.CK_GCM_PARAMS{
+	// Build the struct on the stack first so we can set all fields,
+	// then copy it into arena-allocated C memory.  This gives p.params a
+	// stable address (not a dangling stack pointer) so that p.IV() can
+	// read back the IV that the token may have written into pIv after the
+	// operation completes (e.g. when the token generates its own nonce).
+	tmp := C.CK_GCM_PARAMS{
 		ulTagBits: C.CK_ULONG(p.tagSize),
 	}
 	var arena arena
 	if len(p.iv) > 0 {
 		iv, ivLen := arena.Allocate(p.iv)
-		params.pIv = C.CK_BYTE_PTR(iv)
-		params.ulIvLen = ivLen
-		params.ulIvBits = ivLen * 8
+		tmp.pIv = C.CK_BYTE_PTR(iv)
+		tmp.ulIvLen = ivLen
+		tmp.ulIvBits = ivLen * 8
 	}
 	if len(p.aad) > 0 {
 		aad, aadLen := arena.Allocate(p.aad)
-		params.pAAD = C.CK_BYTE_PTR(aad)
-		params.ulAADLen = aadLen
+		tmp.pAAD = C.CK_BYTE_PTR(aad)
+		tmp.ulAADLen = aadLen
 	}
+	// Copy the struct into arena C memory so p.params survives the return.
+	structBytes := C.GoBytes(unsafe.Pointer(&tmp), C.int(unsafe.Sizeof(tmp)))
+	paramsPtr, _ := arena.Allocate(structBytes)
+
 	p.Free()
 	p.arena = arena
-	p.params = &params
-	return C.GoBytes(unsafe.Pointer(&params), C.int(unsafe.Sizeof(params)))
+	p.params = (*C.CK_GCM_PARAMS)(unsafe.Pointer(paramsPtr))
+	return structBytes
 }
 
 // IV returns a copy of the actual IV used for the operation.

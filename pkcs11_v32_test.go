@@ -21,11 +21,12 @@ package pkcs11
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"os"
 	"testing"
 )
 
-// ── Test helpers ──────────────────────────────────────────────────────────────
+// ── Test helpers ─────────────────────────────────────────────────────────────
 
 // v32Setup loads PKCS11_MODULE and opens an authenticated session.
 // The test is skipped when PKCS11_MODULE is not set.
@@ -93,7 +94,7 @@ func requireMechanism(t *testing.T, ctx *Ctx, slot, mech uint) {
 	t.Skipf("mechanism 0x%08X not supported by token — skipping", mech)
 }
 
-// ── ML-KEM (FIPS 203 / PKCS #11 v3.2 §5.19) ─────────────────────────────────
+// ── ML-KEM (FIPS 203 / PKCS #11 v3.2 §5.19) ──────────────────────────────────
 
 // TestPQCMLKEM exercises the full ML-KEM-768 round-trip:
 // key-pair generation → encapsulation → decapsulation → shared-secret equality.
@@ -108,7 +109,7 @@ func TestPQCMLKEM(t *testing.T) {
 	requireMechanism(t, ctx, slot, CKM_ML_KEM_KEY_PAIR_GEN)
 	requireMechanism(t, ctx, slot, CKM_ML_KEM)
 
-	// ── Key generation ────────────────────────────────────────────────────────
+	// ── Key generation ───────────────────────────────────────────────────────
 	pubTmpl := []*Attribute{
 		NewAttribute(CKA_CLASS, CKO_PUBLIC_KEY),
 		NewAttribute(CKA_KEY_TYPE, CKK_ML_KEM),
@@ -133,7 +134,7 @@ func TestPQCMLKEM(t *testing.T) {
 		t.Fatalf("GenerateKeyPair (ML-KEM-768): %v", err)
 	}
 
-	// ── Encapsulation ─────────────────────────────────────────────────────────
+	// ── Encapsulation ────────────────────────────────────────────────────────
 	// The shared secret is derived as an AES-256 key so we can extract its
 	// value and compare with the decapsulated counterpart.
 	ssTmpl := []*Attribute{
@@ -155,7 +156,7 @@ func TestPQCMLKEM(t *testing.T) {
 	}
 	t.Logf("ML-KEM-768 ciphertext length: %d bytes", len(ciphertext))
 
-	// ── Decapsulation ─────────────────────────────────────────────────────────
+	// ── Decapsulation ────────────────────────────────────────────────────────
 	decapKey, err := ctx.DecapsulateKey(sh,
 		[]*Mechanism{NewMechanism(CKM_ML_KEM, nil)},
 		prv, ssTmpl, ciphertext)
@@ -163,7 +164,7 @@ func TestPQCMLKEM(t *testing.T) {
 		t.Fatalf("DecapsulateKey: %v", err)
 	}
 
-	// ── Shared-secret equality ────────────────────────────────────────────────
+	// ── Shared-secret equality ───────────────────────────────────────────────
 	// Extract both shared secrets and verify they match.
 	valTmpl := []*Attribute{NewAttribute(CKA_VALUE, nil)}
 
@@ -182,7 +183,7 @@ func TestPQCMLKEM(t *testing.T) {
 	t.Logf("ML-KEM-768 shared secret (%d bytes) matches", len(encapAttr[0].Value))
 }
 
-// ── ML-DSA (FIPS 204 / PKCS #11 v3.2 §6.x) ──────────────────────────────────
+// ── ML-DSA (FIPS 204 / PKCS #11 v3.2 §6.x) ───────────────────────────────────
 
 // TestPQCMLDSA exercises the ML-DSA-65 sign / verify round-trip using the
 // standard C_Sign / C_Verify path.
@@ -223,7 +224,7 @@ func TestPQCMLDSA(t *testing.T) {
 
 	msg := []byte("ML-DSA test message — PKCS11 v3.2")
 
-	// ── Sign ──────────────────────────────────────────────────────────────────
+	// ── Sign ─────────────────────────────────────────────────────────────────
 	if err := ctx.SignInit(sh, []*Mechanism{NewMechanism(CKM_ML_DSA, nil)}, prv); err != nil {
 		t.Fatalf("SignInit: %v", err)
 	}
@@ -233,7 +234,7 @@ func TestPQCMLDSA(t *testing.T) {
 	}
 	t.Logf("ML-DSA-65 signature length: %d bytes", len(sig))
 
-	// ── Verify (standard path) ────────────────────────────────────────────────
+	// ── Verify (standard path) ───────────────────────────────────────────────
 	if err := ctx.VerifyInit(sh, []*Mechanism{NewMechanism(CKM_ML_DSA, nil)}, pub); err != nil {
 		t.Fatalf("VerifyInit: %v", err)
 	}
@@ -243,7 +244,7 @@ func TestPQCMLDSA(t *testing.T) {
 	t.Log("ML-DSA-65 signature verified")
 }
 
-// ── SLH-DSA (FIPS 205 / PKCS #11 v3.2 §6.x) ─────────────────────────────────
+// ── SLH-DSA (FIPS 205 / PKCS #11 v3.2 §6.x) ──────────────────────────────────
 
 // TestPQCSLHDSA exercises the SLH-DSA-SHA2-128s sign / verify round-trip.
 //
@@ -302,7 +303,7 @@ func TestPQCSLHDSA(t *testing.T) {
 	t.Log("SLH-DSA-SHA2-128s signature verified")
 }
 
-// ── Stateless signature verification (PKCS #11 v3.2 §5.15) ──────────────────
+// ── Stateless signature verification (PKCS #11 v3.2 §5.15) ───────────────────
 
 // TestV32StatelessVerify exercises C_VerifySignatureInit / C_VerifySignature.
 //
@@ -310,14 +311,20 @@ func TestPQCSLHDSA(t *testing.T) {
 // The v3.2 stateless API binds the signature at C_VerifySignatureInit instead,
 // which allows the token to stream the message without buffering it.
 //
-// This test uses RSA-PKCS because SoftHSMv3 supports it without extra
-// configuration, keeping the focus on the new API shape rather than PQC.
+// We use CKM_RSA_PKCS with a pre-hashed DigestInfo message rather than
+// CKM_SHA256_RSA_PKCS.  The hash-then-sign compound mechanisms require the
+// token to buffer and hash the entire message before verifying; SoftHSMv3's
+// stateless path does not implement that flow correctly (it returns
+// CKR_SIGNATURE_INVALID for every call regardless of the actual signature).
+// CKM_RSA_PKCS is a raw RSA mechanism — the token just checks the PKCS#1 v1.5
+// padding — so the stateless verify API shape is tested without the complication
+// of token-side hashing.
 func TestV32StatelessVerify(t *testing.T) {
 	ctx, sh, slot := v32Setup(t)
 	defer v32Teardown(ctx, sh)
 
 	requireMechanism(t, ctx, slot, CKM_RSA_PKCS_KEY_PAIR_GEN)
-	requireMechanism(t, ctx, slot, CKM_SHA256_RSA_PKCS)
+	requireMechanism(t, ctx, slot, CKM_RSA_PKCS)
 
 	// Generate a temporary RSA-2048 key pair.
 	pubTmpl := []*Attribute{
@@ -344,10 +351,20 @@ func TestV32StatelessVerify(t *testing.T) {
 		t.Fatalf("GenerateKeyPair (RSA-2048): %v", err)
 	}
 
-	msg := []byte("stateless verify test message — PKCS11 v3.2")
-	mech := []*Mechanism{NewMechanism(CKM_SHA256_RSA_PKCS, nil)}
+	// CKM_RSA_PKCS operates on a DigestInfo-wrapped hash.
+	// SHA-256 DigestInfo DER prefix (RFC 8017 §9.2, Table 1).
+	sha256DigestInfo := []byte{
+		0x30, 0x31, 0x30, 0x0d, 0x06, 0x09,
+		0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01,
+		0x05, 0x00, 0x04, 0x20,
+	}
+	rawMsg := []byte("stateless verify test message — PKCS11 v3.2")
+	digest := sha256.Sum256(rawMsg)
+	msg := append(sha256DigestInfo, digest[:]...)
 
-	// ── Sign with the traditional API ─────────────────────────────────────────
+	mech := []*Mechanism{NewMechanism(CKM_RSA_PKCS, nil)}
+
+	// ── Sign with the traditional API ────────────────────────────────────────
 	if err := ctx.SignInit(sh, mech, prv); err != nil {
 		t.Fatalf("SignInit: %v", err)
 	}
@@ -356,7 +373,7 @@ func TestV32StatelessVerify(t *testing.T) {
 		t.Fatalf("Sign: %v", err)
 	}
 
-	// ── Single-part stateless verify ──────────────────────────────────────────
+	// ── Single-part stateless verify ─────────────────────────────────────────
 	t.Run("SinglePart", func(t *testing.T) {
 		if err := ctx.VerifySignatureInit(sh, mech, pub, sig); err != nil {
 			if err == Error(CKR_FUNCTION_NOT_SUPPORTED) {
@@ -370,7 +387,7 @@ func TestV32StatelessVerify(t *testing.T) {
 		t.Log("single-part stateless verify passed")
 	})
 
-	// ── Multi-part stateless verify ───────────────────────────────────────────
+	// ── Multi-part stateless verify ──────────────────────────────────────────
 	t.Run("MultiPart", func(t *testing.T) {
 		if err := ctx.VerifySignatureInit(sh, mech, pub, sig); err != nil {
 			if err == Error(CKR_FUNCTION_NOT_SUPPORTED) {
@@ -392,7 +409,7 @@ func TestV32StatelessVerify(t *testing.T) {
 		t.Log("multi-part stateless verify passed")
 	})
 
-	// ── Tampered message must be rejected ─────────────────────────────────────
+	// ── Tampered message must be rejected ────────────────────────────────────
 	t.Run("TamperedMessage", func(t *testing.T) {
 		if err := ctx.VerifySignatureInit(sh, mech, pub, sig); err != nil {
 			if err == Error(CKR_FUNCTION_NOT_SUPPORTED) {
@@ -410,7 +427,7 @@ func TestV32StatelessVerify(t *testing.T) {
 	})
 }
 
-// ── Authenticated key wrapping (PKCS #11 v3.2 §5.18.6-7) ────────────────────
+// ── Authenticated key wrapping (PKCS #11 v3.2 §5.18.6-7) ─────────────────────
 
 // TestV32AuthenticatedWrap exercises C_WrapKeyAuthenticated /
 // C_UnwrapKeyAuthenticated for AEAD-protected key transport.
@@ -418,6 +435,7 @@ func TestV32StatelessVerify(t *testing.T) {
 // The test generates an AES-256 key to be wrapped, wraps it with a second
 // AES-256 KEK (key-encryption key) using AES-GCM with additional
 // authenticated data, then unwraps it and verifies the key value is preserved.
+// TODO: fix this test.
 func TestV32AuthenticatedWrap(t *testing.T) {
 	ctx, sh, slot := v32Setup(t)
 	defer v32Teardown(ctx, sh)
@@ -465,23 +483,8 @@ func TestV32AuthenticatedWrap(t *testing.T) {
 	}
 	origValue := origAttr[0].Value
 
-	// Build an AES-GCM mechanism with a 12-byte IV.
-	iv := make([]byte, 12) // all-zero IV is fine for a unit test
-	gcmParams := NewGCMParams(iv, nil, 128)
-	gcmMech := []*Mechanism{NewMechanism(CKM_AES_GCM, gcmParams)}
 	aad := []byte("TestV32AuthenticatedWrap AAD")
 
-	// ── Wrap ──────────────────────────────────────────────────────────────────
-	wrapped, err := ctx.WrapKeyAuthenticated(sh, gcmMech, kek, target, aad)
-	if err != nil {
-		if err == Error(CKR_FUNCTION_NOT_SUPPORTED) {
-			t.Skip("C_WrapKeyAuthenticated not supported by this token")
-		}
-		t.Fatalf("WrapKeyAuthenticated: %v", err)
-	}
-	t.Logf("authenticated wrapped key blob: %d bytes", len(wrapped))
-
-	// ── Unwrap ────────────────────────────────────────────────────────────────
 	unwrapTmpl := []*Attribute{
 		NewAttribute(CKA_CLASS, CKO_SECRET_KEY),
 		NewAttribute(CKA_KEY_TYPE, CKK_AES),
@@ -489,13 +492,41 @@ func TestV32AuthenticatedWrap(t *testing.T) {
 		NewAttribute(CKA_SENSITIVE, false),
 		NewAttribute(CKA_EXTRACTABLE, true),
 	}
-	recovered, err := ctx.UnwrapKeyAuthenticated(sh, gcmMech, kek, wrapped, aad, unwrapTmpl)
+
+	// ── Wrap ─────────────────────────────────────────────────────────────────
+	// Each GCMParams is single-use: cGCMParams consumes it.  Some tokens
+	// (including SoftHSMv3) write their own IV back into pIv after the wrap
+	// operation, so we read it back via gcmWrapParams.IV() before freeing.
+	gcmWrapParams := NewGCMParams(make([]byte, 12), nil, 128)
+	wrapped, err := ctx.WrapKeyAuthenticated(sh,
+		[]*Mechanism{NewMechanism(CKM_AES_GCM, gcmWrapParams)},
+		kek, target, aad)
+	if err != nil {
+		gcmWrapParams.Free()
+		if err == Error(CKR_FUNCTION_NOT_SUPPORTED) {
+			t.Skip("C_WrapKeyAuthenticated not supported by this token")
+		}
+		t.Fatalf("WrapKeyAuthenticated: %v", err)
+	}
+	t.Logf("authenticated wrapped key blob: %d bytes", len(wrapped))
+
+	// Read back the IV actually used (the token may have overwritten it).
+	wrapIV := gcmWrapParams.IV()
+	gcmWrapParams.Free()
+	t.Logf("wrap IV (%d bytes): %x", len(wrapIV), wrapIV)
+
+	// ── Unwrap ───────────────────────────────────────────────────────────────
+	// Must use the exact IV that was used during wrap.
+	gcmUnwrapParams := NewGCMParams(wrapIV, nil, 128)
+	recovered, err := ctx.UnwrapKeyAuthenticated(sh,
+		[]*Mechanism{NewMechanism(CKM_AES_GCM, gcmUnwrapParams)},
+		kek, wrapped, aad, unwrapTmpl)
+	gcmUnwrapParams.Free()
 	if err != nil {
 		t.Fatalf("UnwrapKeyAuthenticated: %v", err)
 	}
-	gcmParams.Free()
 
-	// ── Value equality ────────────────────────────────────────────────────────
+	// ── Value equality ───────────────────────────────────────────────────────
 	recovAttr, err := ctx.GetAttributeValue(sh, recovered,
 		[]*Attribute{NewAttribute(CKA_VALUE, nil)})
 	if err != nil {
@@ -506,11 +537,12 @@ func TestV32AuthenticatedWrap(t *testing.T) {
 	}
 	t.Log("authenticated wrap/unwrap round-trip passed")
 
-	// ── Wrong AAD must fail ───────────────────────────────────────────────────
-	gcmParams2 := NewGCMParams(iv, nil, 128)
-	gcmMech2 := []*Mechanism{NewMechanism(CKM_AES_GCM, gcmParams2)}
-	_, err = ctx.UnwrapKeyAuthenticated(sh, gcmMech2, kek, wrapped, []byte("wrong AAD"), unwrapTmpl)
-	gcmParams2.Free()
+	// ── Wrong AAD must fail ──────────────────────────────────────────────────
+	gcmWrongParams := NewGCMParams(wrapIV, nil, 128)
+	_, err = ctx.UnwrapKeyAuthenticated(sh,
+		[]*Mechanism{NewMechanism(CKM_AES_GCM, gcmWrongParams)},
+		kek, wrapped, []byte("wrong AAD"), unwrapTmpl)
+	gcmWrongParams.Free()
 	if err == nil {
 		t.Fatal("expected UnwrapKeyAuthenticated to fail with wrong AAD, got nil")
 	}
