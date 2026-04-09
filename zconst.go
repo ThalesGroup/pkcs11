@@ -7,6 +7,11 @@
 package pkcs11
 
 const (
+	CK_TRUE                                 = 1
+	CK_FALSE                                = 0
+	CK_UNAVAILABLE_INFORMATION              = ^uint(0)
+	CK_EFFECTIVELY_INFINITE                 = 0
+	CK_INVALID_HANDLE                       = 0
 	CKN_SURRENDER                           = 0
 	CKN_OTP_CHANGED                         = 1
 	CKF_TOKEN_PRESENT                       = 0x00000001
@@ -138,11 +143,26 @@ const (
 	CKK_ML_DSA                              = 0x0000004a
 	CKK_SLH_DSA                             = 0x0000004b
 	CKK_VENDOR_DEFINED                      = 0x80000000
+	CK_CERTIFICATE_CATEGORY_UNSPECIFIED     = 0
+	CK_CERTIFICATE_CATEGORY_TOKEN_USER      = 1
+	CK_CERTIFICATE_CATEGORY_AUTHORITY       = 2
+	CK_CERTIFICATE_CATEGORY_OTHER_ENTITY    = 3
+	CK_SECURITY_DOMAIN_UNSPECIFIED          = 0
+	CK_SECURITY_DOMAIN_MANUFACTURER         = 1
+	CK_SECURITY_DOMAIN_OPERATOR             = 2
+	CK_SECURITY_DOMAIN_THIRD_PARTY          = 3
 	CKC_X_509                               = 0x00000000
 	CKC_X_509_ATTR_CERT                     = 0x00000001
 	CKC_WTLS                                = 0x00000002
 	CKC_VENDOR_DEFINED                      = 0x80000000
 	CKF_ARRAY_ATTRIBUTE                     = 0x40000000
+	CK_OTP_FORMAT_DECIMAL                   = 0
+	CK_OTP_FORMAT_HEXADECIMAL               = 1
+	CK_OTP_FORMAT_ALPHANUMERIC              = 2
+	CK_OTP_FORMAT_BINARY                    = 3
+	CK_OTP_PARAM_IGNORED                    = 0
+	CK_OTP_PARAM_OPTIONAL                   = 1
+	CK_OTP_PARAM_MANDATORY                  = 2
 	CKA_CLASS                               = 0x00000000
 	CKA_TOKEN                               = 0x00000001
 	CKA_PRIVATE                             = 0x00000002
@@ -969,6 +989,14 @@ const (
 	CKP_PKCS5_PBKD2_HMAC_SHA512_224         = 0x00000007
 	CKP_PKCS5_PBKD2_HMAC_SHA512_256         = 0x00000008
 	CKZ_SALT_SPECIFIED                      = 0x00000001
+	CK_OTP_VALUE                            = 0
+	CK_OTP_PIN                              = 1
+	CK_OTP_CHALLENGE                        = 2
+	CK_OTP_TIME                             = 3
+	CK_OTP_COUNTER                          = 4
+	CK_OTP_FLAGS                            = 5
+	CK_OTP_OUTPUT_LENGTH                    = 6
+	CK_OTP_OUTPUT_FORMAT                    = 7
 	CKF_NEXT_OTP                            = 0x00000001
 	CKF_EXCLUDE_TIME                        = 0x00000002
 	CKF_EXCLUDE_COUNTER                     = 0x00000004
@@ -980,6 +1008,14 @@ const (
 	CKG_GENERATE_COUNTER                    = 0x00000002
 	CKG_GENERATE_RANDOM                     = 0x00000003
 	CKG_GENERATE_COUNTER_XOR                = 0x00000004
+	CK_SP800_108_ITERATION_VARIABLE         = 0x00000001
+	CK_SP800_108_OPTIONAL_COUNTER           = 0x00000002
+	CK_SP800_108_DKM_LENGTH                 = 0x00000003
+	CK_SP800_108_BYTE_ARRAY                 = 0x00000004
+	CK_SP800_108_COUNTER                    = CK_SP800_108_OPTIONAL_COUNTER
+	CK_SP800_108_KEY_HANDLE                 = 0x00000005
+	CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS     = 0x00000001
+	CK_SP800_108_DKM_LENGTH_SUM_OF_SEGMENTS = 0x00000002
 	CKF_HKDF_SALT_NULL                      = 0x00000001
 	CKF_HKDF_SALT_DATA                      = 0x00000002
 	CKF_HKDF_SALT_KEY                       = 0x00000004

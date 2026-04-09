@@ -38,11 +38,13 @@ func main() {
 		if fields[0] != "#define" {
 			continue
 		}
-		if strings.HasPrefix(fields[1], "CK_") {
-			continue
-		}
 		// fields[1] (const name) needs to be 3 chars, starting with CK
 		if !strings.HasPrefix(fields[1], "CK") {
+			continue
+		}
+		// special case for (~0UL) — C bitwise NOT of unsigned long, becomes ^uint(0) in Go
+		if fields[2] == "(~0UL)" {
+			fmt.Fprintln(out, fields[1], " = ", "^uint(0)")
 			continue
 		}
 		value := strings.TrimSuffix(fields[2], "UL")
