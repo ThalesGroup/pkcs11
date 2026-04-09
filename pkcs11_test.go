@@ -1,3 +1,5 @@
+// Copyright 2026 The golang pkcs11 Authors. All rights reserved.
+// Based on the original work of Miek Gieben.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
