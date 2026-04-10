@@ -1,10 +1,12 @@
 # Makefile for miekg/pkcs11 — PKCS #11 v3.2 support
 #
 # The three official OASIS PKCS #11 v3.2 headers are downloaded verbatim from
-# the canonical OASIS publication URL. They must never be hand-edited.
+# the OASIS pkcs11 GitHub repository (tag pkcs11-3.20, commit 858bfc8b93ded02a40886e2321240b5978e1aa42).
+# They must never be hand-edited.
 # After any header refresh, re-run `make generate` to regenerate zconst.go.
 
-OASIS := https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/include/pkcs11-v3.2
+OASIS_COMMIT := 858bfc8b93ded02a40886e2321240b5978e1aa42
+OASIS := https://raw.githubusercontent.com/oasis-tcs/pkcs11/$(OASIS_COMMIT)/published/3-02
 
 .PHONY: all headers generate test integration integration-v32 clean-headers
 
