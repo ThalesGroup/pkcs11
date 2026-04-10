@@ -1,28 +1,33 @@
 # PKCS#11
 
 This is a Go implementation of the PKCS#11 API. It wraps the library closely, but uses Go idiom where
-it makes sense. It has been tested with SoftHSM.
+it makes sense. It has been tested with [SoftHSMv3 by PQCToday](https://github.com/pqctoday/softhsm).
 
-The version used is "PKCS #11 Cryptographic Token Interface Base Specification Version 3.0", see
-<http://docs.oasis-open.org/pkcs11/pkcs11-base/v3.0/pkcs11-base-v3.0.html>. Note that the header
-files listed there are *broken*, the fixed ones live in a [github repo](https://github.com/oasis-tcs/pkcs11/tree/master/working/headers).
-From that repo commit 188b0b1024403f1907b6cf5fedc0bc148c2221a2 was pulled into this repository.
+The specification followed is [PKCS #11 Cryptographic Token Interface Version 3.2](https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.html).
+The C headers are fetched from the [OASIS pkcs11 repository](https://github.com/oasis-tcs/pkcs11/tree/pkcs11-3.20/published/3-02)
+at tag `pkcs11-3.20` (commit `858bfc8b93ded02a40886e2321240b5978e1aa42`) via `make headers`.
 
-## SoftHSM
+## PKCS#11 v3.2 support
 
- *  Make it use a custom configuration file `export SOFTHSM_CONF=$PWD/softhsm.conf`
+This fork extends the upstream library with support for PKCS#11 v3.2, including:
 
- *  Then use `softhsm` to init it
+- `C_EncapsulateKey` / `C_DecapsulateKey` — KEM operations (§5.19)
+- ML-KEM key generation, encapsulation and decapsulation (`CKM_ML_KEM_KEY_PAIR_GEN`, `CKM_ML_KEM`)
+- New constants: `CKK_ML_KEM`, `CKP_ML_KEM_512/768/1024`, `CKA_ENCAPSULATE`, `CKA_DECAPSULATE`, `CKA_PARAMETER_SET`, `CKF_ENCAPSULATE`, `CKF_DECAPSULATE`
 
-    ~~~
-    softhsm --init-token --slot 0 --label test --pin 1234
-    ~~~
+## SoftHSMv3
 
- *  Then use `libsofthsm2.so` as the pkcs11 module:
+Integration tests require [SoftHSMv3 by PQCToday](https://github.com/pqctoday/softhsm), a software
+HSM compliant with PKCS#11 v3.2.
 
-    ~~~ go
-    p := pkcs11.New("/usr/lib/softhsm/libsofthsm2.so")
-    ~~~
+No manual token setup is needed — `TestMain` creates an ephemeral token via the PKCS#11 API
+(`C_InitToken` / `C_InitPIN`) in a temporary directory and cleans it up after the run.
+
+Pass the path to the SoftHSMv3 shared library via `PKCS11_MODULE`:
+
+~~~
+make integration PKCS11_MODULE=/path/to/libsofthsm3.so
+~~~
 
 ## Examples
 
