@@ -7,6 +7,15 @@ The specification followed is [PKCS #11 Cryptographic Token Interface Version 3.
 The C headers are fetched from the [OASIS pkcs11 repository](https://github.com/oasis-tcs/pkcs11/tree/pkcs11-3.20/published/3-02)
 at tag `pkcs11-3.20` (commit `858bfc8b93ded02a40886e2321240b5978e1aa42`) via `make headers`.
 
+## Overview & Architecture
+
+The folowing diagrams help understand the architecture of this library.
+
+* [architecture diagrams](./docs/architecture-diagrams.md)
+* [component diagrams](./docs/component-diagrams.md)
+* [flow diagrams](./docs/flow-diagrams.md)
+* [sequence diagrams](./docs/sequence-diagrams.md)
+
 ## PKCS#11 v3.2 support
 
 This fork extends the upstream library with support for PKCS#11 v3.2, including:
@@ -15,7 +24,7 @@ This fork extends the upstream library with support for PKCS#11 v3.2, including:
 - ML-KEM key generation, encapsulation and decapsulation (`CKM_ML_KEM_KEY_PAIR_GEN`, `CKM_ML_KEM`)
 - New constants: `CKK_ML_KEM`, `CKP_ML_KEM_512/768/1024`, `CKA_ENCAPSULATE`, `CKA_DECAPSULATE`, `CKA_PARAMETER_SET`, `CKF_ENCAPSULATE`, `CKF_DECAPSULATE`
 
-## SoftHSMv3
+## SoftHSMv3 - A Software HSM that implements PKCS#11 v3.2
 
 Integration tests require [SoftHSMv3 by PQCToday](https://github.com/pqctoday/softhsm), a software
 HSM compliant with PKCS#11 v3.2.
@@ -25,7 +34,7 @@ No manual token setup is needed — `TestMain` creates an ephemeral token via th
 
 Pass the path to the SoftHSMv3 shared library via `PKCS11_MODULE`:
 
-~~~
+~~~ bash
 make integration PKCS11_MODULE=/path/to/libsofthsm3.so
 ~~~
 
