@@ -84,4 +84,4 @@ fmt.Println()
 Further examples are included in the tests.
 
 To expose PKCS#11 keys using the [crypto.Signer interface](https://golang.org/pkg/crypto/#Signer),
-please see [github.com/thalesignite/crypto11](https://github.com/thalesignite/crypto11).
+please see [github.com/ThalesGroup/crypto11](https://github.com/ThalesGroup/crypto11).
