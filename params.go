@@ -1,6 +1,8 @@
-// Copyright 2013 Miek Gieben. All rights reserved.
+// Copyright 2026 Miek Gieben and the Golang pkcs11 Contributors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
+
+// SPDX-License-Identifier: BSD-3-Clause
 
 package pkcs11
 
@@ -71,21 +73,30 @@ func NewGCMParams(iv, aad []byte, tagSize int) *GCMParams {
 }
 
 func cGCMParams(p *GCMParams) []byte {
-	params := C.CK_GCM_PARAMS{
+	// Build the struct on the stack first so we can set all fields,
+	// then copy it into arena-allocated C memory.  This gives p.params a
+	// stable address (not a dangling stack pointer) so that p.IV() can
+	// read back the IV that the token may have written into pIv after the
+	// operation completes (e.g. when the token generates its own nonce).
+	tmp := C.CK_GCM_PARAMS{
 		ulTagBits: C.CK_ULONG(p.tagSize),
 	}
 	var arena arena
 	if len(p.iv) > 0 {
 		iv, ivLen := arena.Allocate(p.iv)
-		params.pIv = C.CK_BYTE_PTR(iv)
-		params.ulIvLen = ivLen
-		params.ulIvBits = ivLen * 8
+		tmp.pIv = C.CK_BYTE_PTR(iv)
+		tmp.ulIvLen = ivLen
+		tmp.ulIvBits = ivLen * 8
 	}
 	if len(p.aad) > 0 {
 		aad, aadLen := arena.Allocate(p.aad)
-		params.pAAD = C.CK_BYTE_PTR(aad)
-		params.ulAADLen = aadLen
+		tmp.pAAD = C.CK_BYTE_PTR(aad)
+		tmp.ulAADLen = aadLen
 	}
+	// Copy the struct into arena C memory so p.params survives the return.
+	structBytes := C.GoBytes(unsafe.Pointer(&tmp), C.int(unsafe.Sizeof(tmp)))
+	paramsPtr, _ := arena.Allocate(structBytes)
+
 	p.Free()
 	p.arena = arena
 	p.params = &params
@@ -191,6 +202,32 @@ func cECDH1DeriveParams(p *ECDH1DeriveParams, arena arena) ([]byte, arena) {
 	publicKeyData, publicKeyDataLen := arena.Allocate(p.PublicKeyData)
 	C.putECDH1PublicParams(&params, publicKeyData, publicKeyDataLen)
 
+	return memBytes(unsafe.Pointer(&params), unsafe.Sizeof(params)), arena
+}
+
+// RSAAESKeyWrapParams holds parameters for the CKM_RSA_AES_KEY_WRAP mechanism.
+type RSAAESKeyWrapParams struct {
+	AESKeyBits uint
+	OAEPParams OAEPParams
+}
+
+// NewRSAAESKeyWrapParams creates a CK_RSA_AES_KEY_WRAP_PARAMS structure suitable for use with the CKM_RSA_AES_KEY_WRAP mechanism.
+func NewRSAAESKeyWrapParams(aesKeyBits uint, oaepParams OAEPParams) *RSAAESKeyWrapParams {
+	return &RSAAESKeyWrapParams{
+		AESKeyBits: aesKeyBits,
+		OAEPParams: oaepParams,
+	}
+}
+
+func cRSAAESKeyWrapParams(p *RSAAESKeyWrapParams, arena arena) ([]byte, arena) {
+	params := C.CK_RSA_AES_KEY_WRAP_PARAMS{
+		ulAESKeyBits: C.CK_ULONG(p.AESKeyBits),
+	}
+	oaepBytes, arena := cOAEPParams(&p.OAEPParams, arena)
+	if len(oaepBytes) != 0 {
+		buf, _ := arena.Allocate(oaepBytes)
+		C.putRSAAESKeyWrapParams(&params, buf)
+	}
 	return memBytes(unsafe.Pointer(&params), unsafe.Sizeof(params)), arena
 }
 

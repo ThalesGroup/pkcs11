@@ -1,5 +1,8 @@
+// Copyright 2026 Miek Gieben and the Golang pkcs11 Contributors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
+
+// SPDX-License-Identifier: BSD-3-Clause
 
 package pkcs11
 

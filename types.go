@@ -1,6 +1,8 @@
-// Copyright 2013 Miek Gieben. All rights reserved.
+// Copyright 2026 Miek Gieben and the Golang pkcs11 Contributors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
+
+// SPDX-License-Identifier: BSD-3-Clause
 
 package pkcs11
 
@@ -74,6 +76,10 @@ func memBytes(p unsafe.Pointer, len uintptr) []byte {
 func uintToBytes(x uint64) []byte {
 	ul := C.CK_ULONG(x)
 	return memBytes(unsafe.Pointer(&ul), unsafe.Sizeof(ul))
+}
+
+func memBytes(p unsafe.Pointer, n uintptr) []byte {
+	return C.GoBytes(p, C.int(n))
 }
 
 // Error represents an PKCS#11 error.

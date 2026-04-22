@@ -1,6 +1,18 @@
+// Copyright 2026 Miek Gieben and the Golang pkcs11 Contributors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+// SPDX-License-Identifier: BSD-3-Clause
+
 package p11
 
 import "github.com/miekg/pkcs11"
+
+// KEMKeyPair holds the two objects produced by ML-KEM key generation.
+type KEMKeyPair struct {
+	Public  PublicKey
+	Private PrivateKey
+}
 
 // PublicKey is an Object representing a public key. Since any object can be cast to a
 // PublicKey, it is the user's responsibility to ensure that the object is
@@ -91,6 +103,76 @@ func (pub PublicKey) Verify(mechanism pkcs11.Mechanism, message, signature []byt
 		return err
 	}
 	return nil
+}
+
+// Encapsulate performs ML-KEM key encapsulation (PKCS #11 v3.2 §5.19.1).
+//
+// The token generates a random shared secret, encrypts it under the public key,
+// and returns:
+//   - ciphertext: the KEM ciphertext to be sent to the recipient.
+//   - sharedSecret: a handle to the derived shared-secret key object on the token,
+//     whose type and attributes are controlled by derivedKeyTemplate.
+//
+// Example derivedKeyTemplate for a 32-byte AES-256 shared secret:
+//
+//	[]*pkcs11.Attribute{
+//	    pkcs11.NewAttribute(pkcs11.CKA_CLASS,     pkcs11.CKO_SECRET_KEY),
+//	    pkcs11.NewAttribute(pkcs11.CKA_KEY_TYPE,  pkcs11.CKK_AES),
+//	    pkcs11.NewAttribute(pkcs11.CKA_VALUE_LEN, 32),
+//	    pkcs11.NewAttribute(pkcs11.CKA_TOKEN,     false),
+//	}
+func (pub PublicKey) Encapsulate(mechanism pkcs11.Mechanism, derivedKeyTemplate []*pkcs11.Attribute) (ciphertext []byte, sharedSecret SecretKey, err error) {
+	s := pub.session
+	s.Lock()
+	defer s.Unlock()
+	ct, handle, err := s.ctx.EncapsulateKey(s.handle,
+		[]*pkcs11.Mechanism{&mechanism},
+		pub.objectHandle,
+		derivedKeyTemplate)
+	if err != nil {
+		return nil, SecretKey{}, err
+	}
+	return ct, SecretKey(Object{session: s, objectHandle: handle}), nil
+}
+
+// Decapsulate performs ML-KEM key decapsulation (PKCS #11 v3.2 §5.19.2).
+//
+// The token uses the private key to recover the shared secret from ciphertext
+// and returns a handle to the derived shared-secret key object on the token.
+// derivedKeyTemplate controls the type and attributes of that object; it should
+// match what was passed to Encapsulate on the sender side.
+func (priv PrivateKey) Decapsulate(mechanism pkcs11.Mechanism, ciphertext []byte, derivedKeyTemplate []*pkcs11.Attribute) (SecretKey, error) {
+	s := priv.session
+	s.Lock()
+	defer s.Unlock()
+	handle, err := s.ctx.DecapsulateKey(s.handle,
+		[]*pkcs11.Mechanism{&mechanism},
+		priv.objectHandle,
+		derivedKeyTemplate,
+		ciphertext)
+	if err != nil {
+		return SecretKey{}, err
+	}
+	return SecretKey(Object{session: s, objectHandle: handle}), nil
+}
+
+// VerifyStateless verifies a signature using the PKCS #11 v3.2 stateless API
+// (§5.15): the signature is bound at init time rather than at the final step,
+// which allows the token to stream the message without buffering it.
+//
+// Use this instead of Verify when the token requires the v3.2 flow, for
+// example with ML-DSA keys on a v3.2-capable token.
+func (pub PublicKey) VerifyStateless(mechanism pkcs11.Mechanism, message, signature []byte) error {
+	s := pub.session
+	s.Lock()
+	defer s.Unlock()
+	if err := s.ctx.VerifySignatureInit(s.handle,
+		[]*pkcs11.Mechanism{&mechanism},
+		pub.objectHandle,
+		signature); err != nil {
+		return err
+	}
+	return s.ctx.VerifySignature(s.handle, message)
 }
 
 // Encrypt encrypts a plaintext with a given mechanism.
