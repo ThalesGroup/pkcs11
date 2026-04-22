@@ -57,13 +57,12 @@ type GCMParams struct {
 //
 // Encrypt/Decrypt. As an example:
 //
-//    gcmParams := pkcs11.NewGCMParams(make([]byte, 12), nil, 128)
-//    p.ctx.EncryptInit(session, []*pkcs11.Mechanism{pkcs11.NewMechanism(pkcs11.CKM_AES_GCM, gcmParams)},
-//			aesObjHandle)
-//    ct, _ := p.ctx.Encrypt(session, pt)
-//    iv := gcmParams.IV()
-//    gcmParams.Free()
-//
+//	   gcmParams := pkcs11.NewGCMParams(make([]byte, 12), nil, 128)
+//	   p.ctx.EncryptInit(session, []*pkcs11.Mechanism{pkcs11.NewMechanism(pkcs11.CKM_AES_GCM, gcmParams)},
+//				aesObjHandle)
+//	   ct, _ := p.ctx.Encrypt(session, pt)
+//	   iv := gcmParams.IV()
+//	   gcmParams.Free()
 func NewGCMParams(iv, aad []byte, tagSize int) *GCMParams {
 	return &GCMParams{
 		iv:      iv,
@@ -78,25 +77,21 @@ func cGCMParams(p *GCMParams) []byte {
 	// stable address (not a dangling stack pointer) so that p.IV() can
 	// read back the IV that the token may have written into pIv after the
 	// operation completes (e.g. when the token generates its own nonce).
-	tmp := C.CK_GCM_PARAMS{
+	params := C.CK_GCM_PARAMS{
 		ulTagBits: C.CK_ULONG(p.tagSize),
 	}
 	var arena arena
 	if len(p.iv) > 0 {
 		iv, ivLen := arena.Allocate(p.iv)
-		tmp.pIv = C.CK_BYTE_PTR(iv)
-		tmp.ulIvLen = ivLen
-		tmp.ulIvBits = ivLen * 8
+		params.pIv = C.CK_BYTE_PTR(iv)
+		params.ulIvLen = ivLen
+		params.ulIvBits = ivLen * 8
 	}
 	if len(p.aad) > 0 {
 		aad, aadLen := arena.Allocate(p.aad)
-		tmp.pAAD = C.CK_BYTE_PTR(aad)
-		tmp.ulAADLen = aadLen
+		params.pAAD = C.CK_BYTE_PTR(aad)
+		params.ulAADLen = aadLen
 	}
-	// Copy the struct into arena C memory so p.params survives the return.
-	structBytes := C.GoBytes(unsafe.Pointer(&tmp), C.int(unsafe.Sizeof(tmp)))
-	paramsPtr, _ := arena.Allocate(structBytes)
-
 	p.Free()
 	p.arena = arena
 	p.params = &params
@@ -205,12 +200,6 @@ func cECDH1DeriveParams(p *ECDH1DeriveParams, arena arena) ([]byte, arena) {
 	return memBytes(unsafe.Pointer(&params), unsafe.Sizeof(params)), arena
 }
 
-// RSAAESKeyWrapParams holds parameters for the CKM_RSA_AES_KEY_WRAP mechanism.
-type RSAAESKeyWrapParams struct {
-	AESKeyBits uint
-	OAEPParams OAEPParams
-}
-
 // NewRSAAESKeyWrapParams creates a CK_RSA_AES_KEY_WRAP_PARAMS structure suitable for use with the CKM_RSA_AES_KEY_WRAP mechanism.
 func NewRSAAESKeyWrapParams(aesKeyBits uint, oaepParams OAEPParams) *RSAAESKeyWrapParams {
 	return &RSAAESKeyWrapParams{
@@ -219,18 +208,7 @@ func NewRSAAESKeyWrapParams(aesKeyBits uint, oaepParams OAEPParams) *RSAAESKeyWr
 	}
 }
 
-func cRSAAESKeyWrapParams(p *RSAAESKeyWrapParams, arena arena) ([]byte, arena) {
-	params := C.CK_RSA_AES_KEY_WRAP_PARAMS{
-		ulAESKeyBits: C.CK_ULONG(p.AESKeyBits),
-	}
-	oaepBytes, arena := cOAEPParams(&p.OAEPParams, arena)
-	if len(oaepBytes) != 0 {
-		buf, _ := arena.Allocate(oaepBytes)
-		C.putRSAAESKeyWrapParams(&params, buf)
-	}
-	return memBytes(unsafe.Pointer(&params), unsafe.Sizeof(params)), arena
-}
-
+// RSAAESKeyWrapParams holds parameters for the CKM_RSA_AES_KEY_WRAP mechanism.
 type RSAAESKeyWrapParams struct {
 	AESKeyBits uint
 	OAEPParams OAEPParams
@@ -238,7 +216,7 @@ type RSAAESKeyWrapParams struct {
 
 func cRSAAESKeyWrapParams(p *RSAAESKeyWrapParams, arena arena) ([]byte, arena) {
 	var param []byte
-	params := C.CK_RSA_AES_KEY_WRAP_PARAMS {
+	params := C.CK_RSA_AES_KEY_WRAP_PARAMS{
 		ulAESKeyBits: C.CK_MECHANISM_TYPE(p.AESKeyBits),
 	}
 
@@ -249,4 +227,3 @@ func cRSAAESKeyWrapParams(p *RSAAESKeyWrapParams, arena arena) ([]byte, arena) {
 	}
 	return memBytes(unsafe.Pointer(&params), unsafe.Sizeof(params)), arena
 }
-
