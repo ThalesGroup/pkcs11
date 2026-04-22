@@ -78,10 +78,6 @@ func uintToBytes(x uint64) []byte {
 	return memBytes(unsafe.Pointer(&ul), unsafe.Sizeof(ul))
 }
 
-func memBytes(p unsafe.Pointer, n uintptr) []byte {
-	return C.GoBytes(p, C.int(n))
-}
-
 // Error represents an PKCS#11 error.
 type Error uint
 
