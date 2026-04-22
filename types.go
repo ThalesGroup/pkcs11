@@ -72,6 +72,10 @@ func uintToBytes(x uint64) []byte {
 	return C.GoBytes(unsafe.Pointer(&ul), C.int(unsafe.Sizeof(ul)))
 }
 
+func memBytes(p unsafe.Pointer, n uintptr) []byte {
+	return C.GoBytes(p, C.int(n))
+}
+
 // Error represents an PKCS#11 error.
 type Error uint
 
@@ -257,13 +261,13 @@ func NewMechanism(mech uint, x interface{}) *Mechanism {
 	}
 
 	switch p := x.(type) {
-	case *GCMParams, *OAEPParams, *ECDH1DeriveParams:
+	case *GCMParams, *OAEPParams, *ECDH1DeriveParams, *RSAAESKeyWrapParams:
 		// contains pointers; defer serialization until cMechanism
 		m.generator = p
 	case []byte:
 		m.Parameter = p
 	default:
-		panic("parameter must be one of type: []byte, *GCMParams, *OAEPParams, *ECDH1DeriveParams")
+		panic("parameter must be one of type: []byte, *GCMParams, *OAEPParams, *ECDH1DeriveParams, *RSAAESKeyWrapParams")
 	}
 
 	return m

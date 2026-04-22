@@ -9,500 +9,637 @@
 package pkcs11
 
 const (
-	CK_TRUE                                 = 1
-	CK_FALSE                                = 0
-	CK_UNAVAILABLE_INFORMATION              = ^uint(0)
-	CK_EFFECTIVELY_INFINITE                 = 0
-	CK_INVALID_HANDLE                       = 0
-	CKN_SURRENDER                           = 0
-	CKN_OTP_CHANGED                         = 1
-	CKF_TOKEN_PRESENT                       = 0x00000001
-	CKF_REMOVABLE_DEVICE                    = 0x00000002
-	CKF_HW_SLOT                             = 0x00000004
-	CKF_RNG                                 = 0x00000001
-	CKF_WRITE_PROTECTED                     = 0x00000002
-	CKF_LOGIN_REQUIRED                      = 0x00000004
-	CKF_USER_PIN_INITIALIZED                = 0x00000008
-	CKF_RESTORE_KEY_NOT_NEEDED              = 0x00000020
-	CKF_CLOCK_ON_TOKEN                      = 0x00000040
-	CKF_PROTECTED_AUTHENTICATION_PATH       = 0x00000100
-	CKF_DUAL_CRYPTO_OPERATIONS              = 0x00000200
-	CKF_TOKEN_INITIALIZED                   = 0x00000400
-	CKF_SECONDARY_AUTHENTICATION            = 0x00000800
-	CKF_USER_PIN_COUNT_LOW                  = 0x00010000
-	CKF_USER_PIN_FINAL_TRY                  = 0x00020000
-	CKF_USER_PIN_LOCKED                     = 0x00040000
-	CKF_USER_PIN_TO_BE_CHANGED              = 0x00080000
-	CKF_SO_PIN_COUNT_LOW                    = 0x00100000
-	CKF_SO_PIN_FINAL_TRY                    = 0x00200000
-	CKF_SO_PIN_LOCKED                       = 0x00400000
-	CKF_SO_PIN_TO_BE_CHANGED                = 0x00800000
-	CKF_ERROR_STATE                         = 0x01000000
-	CKF_SEED_RANDOM_REQUIRED                = 0x02000000
-	CKF_ASYNC_SESSION_SUPPORTED             = 0x04000000
-	CKU_SO                                  = 0
-	CKU_USER                                = 1
-	CKU_CONTEXT_SPECIFIC                    = 2
-	CKS_RO_PUBLIC_SESSION                   = 0
-	CKS_RO_USER_FUNCTIONS                   = 1
-	CKS_RW_PUBLIC_SESSION                   = 2
-	CKS_RW_USER_FUNCTIONS                   = 3
-	CKS_RW_SO_FUNCTIONS                     = 4
-	CKF_RW_SESSION                          = 0x00000002
-	CKF_SERIAL_SESSION                      = 0x00000004
-	CKF_ASYNC_SESSION                       = 0x00000008
-	CKO_DATA                                = 0x00000000
-	CKO_CERTIFICATE                         = 0x00000001
-	CKO_PUBLIC_KEY                          = 0x00000002
-	CKO_PRIVATE_KEY                         = 0x00000003
-	CKO_SECRET_KEY                          = 0x00000004
-	CKO_HW_FEATURE                          = 0x00000005
-	CKO_DOMAIN_PARAMETERS                   = 0x00000006
-	CKO_MECHANISM                           = 0x00000007
-	CKO_OTP_KEY                             = 0x00000008
-	CKO_PROFILE                             = 0x00000009
-	CKO_VALIDATION                          = 0x0000000a
-	CKO_TRUST                               = 0x0000000b
-	CKO_VENDOR_DEFINED                      = 0x80000000
-	CKP_INVALID_ID                          = 0x00000000
-	CKP_BASELINE_PROVIDER                   = 0x00000001
-	CKP_EXTENDED_PROVIDER                   = 0x00000002
-	CKP_AUTHENTICATION_TOKEN                = 0x00000003
-	CKP_PUBLIC_CERTIFICATES_TOKEN           = 0x00000004
-	CKP_COMPLETE_PROVIDER                   = 0x00000005
-	CKP_HKDF_TLS_TOKEN                      = 0x00000006
-	CKP_VENDOR_DEFINED                      = 0x80000000
-	CKH_MONOTONIC_COUNTER                   = 0x00000001
-	CKH_CLOCK                               = 0x00000002
-	CKH_USER_INTERFACE                      = 0x00000003
-	CKH_VENDOR_DEFINED                      = 0x80000000
-	CKK_RSA                                 = 0x00000000
-	CKK_DSA                                 = 0x00000001
-	CKK_DH                                  = 0x00000002
-	CKK_ECDSA                               = 0x00000003 // Deprecated
-	CKK_EC                                  = 0x00000003
-	CKK_X9_42_DH                            = 0x00000004
-	CKK_KEA                                 = 0x00000005
-	CKK_GENERIC_SECRET                      = 0x00000010
-	CKK_RC2                                 = 0x00000011
-	CKK_RC4                                 = 0x00000012
-	CKK_DES                                 = 0x00000013
-	CKK_DES2                                = 0x00000014
-	CKK_DES3                                = 0x00000015
-	CKK_CAST                                = 0x00000016
-	CKK_CAST3                               = 0x00000017
-	CKK_CAST5                               = 0x00000018 // Deprecated
-	CKK_CAST128                             = 0x00000018
-	CKK_RC5                                 = 0x00000019
-	CKK_IDEA                                = 0x0000001A
-	CKK_SKIPJACK                            = 0x0000001B
-	CKK_BATON                               = 0x0000001C
-	CKK_JUNIPER                             = 0x0000001D
-	CKK_CDMF                                = 0x0000001E
-	CKK_AES                                 = 0x0000001F
-	CKK_BLOWFISH                            = 0x00000020
-	CKK_TWOFISH                             = 0x00000021
-	CKK_SECURID                             = 0x00000022
-	CKK_HOTP                                = 0x00000023
-	CKK_ACTI                                = 0x00000024
-	CKK_CAMELLIA                            = 0x00000025
-	CKK_ARIA                                = 0x00000026
-	CKK_MD5_HMAC                            = 0x00000027
-	CKK_SHA_1_HMAC                          = 0x00000028
-	CKK_RIPEMD128_HMAC                      = 0x00000029
-	CKK_RIPEMD160_HMAC                      = 0x0000002A
-	CKK_SHA256_HMAC                         = 0x0000002B
-	CKK_SHA384_HMAC                         = 0x0000002C
-	CKK_SHA512_HMAC                         = 0x0000002D
-	CKK_SHA224_HMAC                         = 0x0000002E
-	CKK_SEED                                = 0x0000002F
-	CKK_GOSTR3410                           = 0x00000030
-	CKK_GOSTR3411                           = 0x00000031
-	CKK_GOST28147                           = 0x00000032
-	CKK_CHACHA20                            = 0x00000033
-	CKK_POLY1305                            = 0x00000034
-	CKK_AES_XTS                             = 0x00000035
-	CKK_SHA3_224_HMAC                       = 0x00000036
-	CKK_SHA3_256_HMAC                       = 0x00000037
-	CKK_SHA3_384_HMAC                       = 0x00000038
-	CKK_SHA3_512_HMAC                       = 0x00000039
-	CKK_BLAKE2B_160_HMAC                    = 0x0000003a
-	CKK_BLAKE2B_256_HMAC                    = 0x0000003b
-	CKK_BLAKE2B_384_HMAC                    = 0x0000003c
-	CKK_BLAKE2B_512_HMAC                    = 0x0000003d
-	CKK_SALSA20                             = 0x0000003e
-	CKK_X2RATCHET                           = 0x0000003f
-	CKK_EC_EDWARDS                          = 0x00000040
-	CKK_EC_MONTGOMERY                       = 0x00000041
-	CKK_HKDF                                = 0x00000042
-	CKK_SHA512_224_HMAC                     = 0x00000043
-	CKK_SHA512_256_HMAC                     = 0x00000044
-	CKK_SHA512_T_HMAC                       = 0x00000045
-	CKK_HSS                                 = 0x00000046
-	CKK_XMSS                                = 0x00000047
-	CKK_XMSSMT                              = 0x00000048
-	CKK_ML_KEM                              = 0x00000049
-	CKK_ML_DSA                              = 0x0000004a
-	CKK_SLH_DSA                             = 0x0000004b
-	CKK_VENDOR_DEFINED                      = 0x80000000
-	CK_CERTIFICATE_CATEGORY_UNSPECIFIED     = 0
-	CK_CERTIFICATE_CATEGORY_TOKEN_USER      = 1
-	CK_CERTIFICATE_CATEGORY_AUTHORITY       = 2
-	CK_CERTIFICATE_CATEGORY_OTHER_ENTITY    = 3
-	CK_SECURITY_DOMAIN_UNSPECIFIED          = 0
-	CK_SECURITY_DOMAIN_MANUFACTURER         = 1
-	CK_SECURITY_DOMAIN_OPERATOR             = 2
-	CK_SECURITY_DOMAIN_THIRD_PARTY          = 3
-	CKC_X_509                               = 0x00000000
-	CKC_X_509_ATTR_CERT                     = 0x00000001
-	CKC_WTLS                                = 0x00000002
-	CKC_VENDOR_DEFINED                      = 0x80000000
-	CKF_ARRAY_ATTRIBUTE                     = 0x40000000
-	CK_OTP_FORMAT_DECIMAL                   = 0
-	CK_OTP_FORMAT_HEXADECIMAL               = 1
-	CK_OTP_FORMAT_ALPHANUMERIC              = 2
-	CK_OTP_FORMAT_BINARY                    = 3
-	CK_OTP_PARAM_IGNORED                    = 0
-	CK_OTP_PARAM_OPTIONAL                   = 1
-	CK_OTP_PARAM_MANDATORY                  = 2
-	CKA_CLASS                               = 0x00000000
-	CKA_TOKEN                               = 0x00000001
-	CKA_PRIVATE                             = 0x00000002
-	CKA_LABEL                               = 0x00000003
-	CKA_UNIQUE_ID                           = 0x00000004
-	CKA_APPLICATION                         = 0x00000010
-	CKA_VALUE                               = 0x00000011
-	CKA_OBJECT_ID                           = 0x00000012
-	CKA_CERTIFICATE_TYPE                    = 0x00000080
-	CKA_ISSUER                              = 0x00000081
-	CKA_SERIAL_NUMBER                       = 0x00000082
-	CKA_AC_ISSUER                           = 0x00000083
-	CKA_OWNER                               = 0x00000084
-	CKA_ATTR_TYPES                          = 0x00000085
-	CKA_TRUSTED                             = 0x00000086
-	CKA_CERTIFICATE_CATEGORY                = 0x00000087
-	CKA_JAVA_MIDP_SECURITY_DOMAIN           = 0x00000088
-	CKA_URL                                 = 0x00000089
-	CKA_HASH_OF_SUBJECT_PUBLIC_KEY          = 0x0000008a
-	CKA_HASH_OF_ISSUER_PUBLIC_KEY           = 0x0000008b
-	CKA_NAME_HASH_ALGORITHM                 = 0x0000008c
-	CKA_CHECK_VALUE                         = 0x00000090
-	CKA_KEY_TYPE                            = 0x00000100
-	CKA_SUBJECT                             = 0x00000101
-	CKA_ID                                  = 0x00000102
-	CKA_SENSITIVE                           = 0x00000103
-	CKA_ENCRYPT                             = 0x00000104
-	CKA_DECRYPT                             = 0x00000105
-	CKA_WRAP                                = 0x00000106
-	CKA_UNWRAP                              = 0x00000107
-	CKA_SIGN                                = 0x00000108
-	CKA_SIGN_RECOVER                        = 0x00000109
-	CKA_VERIFY                              = 0x0000010a
-	CKA_VERIFY_RECOVER                      = 0x0000010b
-	CKA_DERIVE                              = 0x0000010c
-	CKA_START_DATE                          = 0x00000110
-	CKA_END_DATE                            = 0x00000111
-	CKA_MODULUS                             = 0x00000120
-	CKA_MODULUS_BITS                        = 0x00000121
-	CKA_PUBLIC_EXPONENT                     = 0x00000122
-	CKA_PRIVATE_EXPONENT                    = 0x00000123
-	CKA_PRIME_1                             = 0x00000124
-	CKA_PRIME_2                             = 0x00000125
-	CKA_EXPONENT_1                          = 0x00000126
-	CKA_EXPONENT_2                          = 0x00000127
-	CKA_COEFFICIENT                         = 0x00000128
-	CKA_PUBLIC_KEY_INFO                     = 0x00000129
-	CKA_PRIME                               = 0x00000130
-	CKA_SUBPRIME                            = 0x00000131
-	CKA_BASE                                = 0x00000132
-	CKA_PRIME_BITS                          = 0x00000133
-	CKA_SUBPRIME_BITS                       = 0x00000134
-	CKA_SUB_PRIME_BITS                      = CKA_SUBPRIME_BITS
-	CKA_VALUE_BITS                          = 0x00000160
-	CKA_VALUE_LEN                           = 0x00000161
-	CKA_EXTRACTABLE                         = 0x00000162
-	CKA_LOCAL                               = 0x00000163
-	CKA_NEVER_EXTRACTABLE                   = 0x00000164
-	CKA_ALWAYS_SENSITIVE                    = 0x00000165
-	CKA_KEY_GEN_MECHANISM                   = 0x00000166
-	CKA_MODIFIABLE                          = 0x00000170
-	CKA_COPYABLE                            = 0x00000171
-	CKA_DESTROYABLE                         = 0x00000172
-	CKA_ECDSA_PARAMS                        = 0x00000180 // Deprecated
-	CKA_EC_PARAMS                           = 0x00000180
-	CKA_EC_POINT                            = 0x00000181
-	CKA_SECONDARY_AUTH                      = 0x00000200 // Deprecated
-	CKA_AUTH_PIN_FLAGS                      = 0x00000201 // Deprecated
-	CKA_ALWAYS_AUTHENTICATE                 = 0x00000202
-	CKA_WRAP_WITH_TRUSTED                   = 0x00000210
-	CKA_WRAP_TEMPLATE                       = (CKF_ARRAY_ATTRIBUTE | 0x00000211)
-	CKA_UNWRAP_TEMPLATE                     = (CKF_ARRAY_ATTRIBUTE | 0x00000212)
-	CKA_DERIVE_TEMPLATE                     = (CKF_ARRAY_ATTRIBUTE | 0x00000213)
-	CKA_OTP_FORMAT                          = 0x00000220
-	CKA_OTP_LENGTH                          = 0x00000221
-	CKA_OTP_TIME_INTERVAL                   = 0x00000222
-	CKA_OTP_USER_FRIENDLY_MODE              = 0x00000223
-	CKA_OTP_CHALLENGE_REQUIREMENT           = 0x00000224
-	CKA_OTP_TIME_REQUIREMENT                = 0x00000225
-	CKA_OTP_COUNTER_REQUIREMENT             = 0x00000226
-	CKA_OTP_PIN_REQUIREMENT                 = 0x00000227
-	CKA_OTP_COUNTER                         = 0x0000022e
-	CKA_OTP_TIME                            = 0x0000022f
-	CKA_OTP_USER_IDENTIFIER                 = 0x0000022a
-	CKA_OTP_SERVICE_IDENTIFIER              = 0x0000022b
-	CKA_OTP_SERVICE_LOGO                    = 0x0000022c
-	CKA_OTP_SERVICE_LOGO_TYPE               = 0x0000022d
-	CKA_GOSTR3410_PARAMS                    = 0x00000250
-	CKA_GOSTR3411_PARAMS                    = 0x00000251
-	CKA_GOST28147_PARAMS                    = 0x00000252
-	CKA_HW_FEATURE_TYPE                     = 0x00000300
-	CKA_RESET_ON_INIT                       = 0x00000301
-	CKA_HAS_RESET                           = 0x00000302
-	CKA_PIXEL_X                             = 0x00000400
-	CKA_PIXEL_Y                             = 0x00000401
-	CKA_RESOLUTION                          = 0x00000402
-	CKA_CHAR_ROWS                           = 0x00000403
-	CKA_CHAR_COLUMNS                        = 0x00000404
-	CKA_COLOR                               = 0x00000405
-	CKA_BITS_PER_PIXEL                      = 0x00000406
-	CKA_CHAR_SETS                           = 0x00000480
-	CKA_ENCODING_METHODS                    = 0x00000481
-	CKA_MIME_TYPES                          = 0x00000482
-	CKA_MECHANISM_TYPE                      = 0x00000500
-	CKA_REQUIRED_CMS_ATTRIBUTES             = 0x00000501
-	CKA_DEFAULT_CMS_ATTRIBUTES              = 0x00000502
-	CKA_SUPPORTED_CMS_ATTRIBUTES            = 0x00000503
-	CKA_ALLOWED_MECHANISMS                  = (CKF_ARRAY_ATTRIBUTE | 0x00000600)
-	CKA_PROFILE_ID                          = 0x00000601
-	CKA_X2RATCHET_BAG                       = 0x00000602
-	CKA_X2RATCHET_BAGSIZE                   = 0x00000603
-	CKA_X2RATCHET_BOBS1STMSG                = 0x00000604
-	CKA_X2RATCHET_CKR                       = 0x00000605
-	CKA_X2RATCHET_CKS                       = 0x00000606
-	CKA_X2RATCHET_DHP                       = 0x00000607
-	CKA_X2RATCHET_DHR                       = 0x00000608
-	CKA_X2RATCHET_DHS                       = 0x00000609
-	CKA_X2RATCHET_HKR                       = 0x0000060a
-	CKA_X2RATCHET_HKS                       = 0x0000060b
-	CKA_X2RATCHET_ISALICE                   = 0x0000060c
-	CKA_X2RATCHET_NHKR                      = 0x0000060d
-	CKA_X2RATCHET_NHKS                      = 0x0000060e
-	CKA_X2RATCHET_NR                        = 0x0000060f
-	CKA_X2RATCHET_NS                        = 0x00000610
-	CKA_X2RATCHET_PNS                       = 0x00000611
-	CKA_X2RATCHET_RK                        = 0x00000612
-	CKA_HSS_LEVELS                          = 0x00000617
-	CKA_HSS_LMS_TYPE                        = 0x00000618
-	CKA_HSS_LMOTS_TYPE                      = 0x00000619
-	CKA_HSS_LMS_TYPES                       = 0x0000061a
-	CKA_HSS_LMOTS_TYPES                     = 0x0000061b
-	CKA_HSS_KEYS_REMAINING                  = 0x0000061c
-	CKA_PARAMETER_SET                       = 0x0000061d
-	CKA_OBJECT_VALIDATION_FLAGS             = 0x0000061e
-	CKA_VALIDATION_TYPE                     = 0x0000061f
-	CKA_VALIDATION_VERSION                  = 0x00000620
-	CKA_VALIDATION_LEVEL                    = 0x00000621
-	CKA_VALIDATION_MODULE_ID                = 0x00000622
-	CKA_VALIDATION_FLAG                     = 0x00000623
-	CKA_VALIDATION_AUTHORITY_TYPE           = 0x00000624
-	CKA_VALIDATION_COUNTRY                  = 0x00000625
-	CKA_VALIDATION_CERTIFICATE_IDENTIFIER   = 0x00000626
-	CKA_VALIDATION_CERTIFICATE_URI          = 0x00000627
-	CKA_VALIDATION_VENDOR_URI               = 0x00000628
-	CKA_VALIDATION_PROFILE                  = 0x00000629
-	CKA_ENCAPSULATE_TEMPLATE                = 0x0000062a
-	CKA_DECAPSULATE_TEMPLATE                = 0x0000062b
-	CKA_TRUST_SERVER_AUTH                   = 0x0000062c
-	CKA_TRUST_CLIENT_AUTH                   = 0x0000062d
-	CKA_TRUST_CODE_SIGNING                  = 0x0000062e
-	CKA_TRUST_EMAIL_PROTECTION              = 0x0000062f
-	CKA_TRUST_IPSEC_IKE                     = 0x00000630
-	CKA_TRUST_TIME_STAMPING                 = 0x00000631
-	CKA_TRUST_OCSP_SIGNING                  = 0x00000632
-	CKA_ENCAPSULATE                         = 0x00000633
-	CKA_DECAPSULATE                         = 0x00000634
-	CKA_HASH_OF_CERTIFICATE                 = 0x00000635
-	CKA_PUBLIC_CRC64_VALUE                  = 0x00000636
-	CKA_SEED                                = 0x00000637
-	CKA_VENDOR_DEFINED                      = 0x80000000
-	CKM_RSA_PKCS_KEY_PAIR_GEN               = 0x00000000
-	CKM_RSA_PKCS                            = 0x00000001
-	CKM_RSA_9796                            = 0x00000002
-	CKM_RSA_X_509                           = 0x00000003
-	CKM_MD2_RSA_PKCS                        = 0x00000004
-	CKM_MD5_RSA_PKCS                        = 0x00000005
-	CKM_SHA1_RSA_PKCS                       = 0x00000006
-	CKM_RIPEMD128_RSA_PKCS                  = 0x00000007
-	CKM_RIPEMD160_RSA_PKCS                  = 0x00000008
-	CKM_RSA_PKCS_OAEP                       = 0x00000009
-	CKM_RSA_X9_31_KEY_PAIR_GEN              = 0x0000000a
-	CKM_RSA_X9_31                           = 0x0000000b
-	CKM_SHA1_RSA_X9_31                      = 0x0000000c
-	CKM_RSA_PKCS_PSS                        = 0x0000000d
-	CKM_SHA1_RSA_PKCS_PSS                   = 0x0000000e
-	CKM_DSA_KEY_PAIR_GEN                    = 0x00000010
-	CKM_DSA                                 = 0x00000011
-	CKM_DSA_SHA1                            = 0x00000012
-	CKM_DSA_SHA224                          = 0x00000013
-	CKM_DSA_SHA256                          = 0x00000014
-	CKM_DSA_SHA384                          = 0x00000015
-	CKM_DSA_SHA512                          = 0x00000016
-	CKM_DSA_SHA3_224                        = 0x00000018
-	CKM_DSA_SHA3_256                        = 0x00000019
-	CKM_DSA_SHA3_384                        = 0x0000001a
-	CKM_DSA_SHA3_512                        = 0x0000001b
-	CKM_DH_PKCS_KEY_PAIR_GEN                = 0x00000020
-	CKM_DH_PKCS_DERIVE                      = 0x00000021
-	CKM_X9_42_DH_KEY_PAIR_GEN               = 0x00000030
-	CKM_X9_42_DH_DERIVE                     = 0x00000031
-	CKM_X9_42_DH_HYBRID_DERIVE              = 0x00000032
-	CKM_X9_42_MQV_DERIVE                    = 0x00000033
-	CKM_SHA256_RSA_PKCS                     = 0x00000040
-	CKM_SHA384_RSA_PKCS                     = 0x00000041
-	CKM_SHA512_RSA_PKCS                     = 0x00000042
-	CKM_SHA256_RSA_PKCS_PSS                 = 0x00000043
-	CKM_SHA384_RSA_PKCS_PSS                 = 0x00000044
-	CKM_SHA512_RSA_PKCS_PSS                 = 0x00000045
-	CKM_SHA224_RSA_PKCS                     = 0x00000046
-	CKM_SHA224_RSA_PKCS_PSS                 = 0x00000047
-	CKM_SHA512_224                          = 0x00000048
-	CKM_SHA512_224_HMAC                     = 0x00000049
-	CKM_SHA512_224_HMAC_GENERAL             = 0x0000004a
-	CKM_SHA512_224_KEY_DERIVATION           = 0x0000004b
-	CKM_SHA512_256                          = 0x0000004c
-	CKM_SHA512_256_HMAC                     = 0x0000004d
-	CKM_SHA512_256_HMAC_GENERAL             = 0x0000004e
-	CKM_SHA512_256_KEY_DERIVATION           = 0x0000004f
-	CKM_SHA512_T                            = 0x00000050
-	CKM_SHA512_T_HMAC                       = 0x00000051
-	CKM_SHA512_T_HMAC_GENERAL               = 0x00000052
-	CKM_SHA512_T_KEY_DERIVATION             = 0x00000053
-	CKM_SHA3_256_RSA_PKCS                   = 0x00000060
-	CKM_SHA3_384_RSA_PKCS                   = 0x00000061
-	CKM_SHA3_512_RSA_PKCS                   = 0x00000062
-	CKM_SHA3_256_RSA_PKCS_PSS               = 0x00000063
-	CKM_SHA3_384_RSA_PKCS_PSS               = 0x00000064
-	CKM_SHA3_512_RSA_PKCS_PSS               = 0x00000065
-	CKM_SHA3_224_RSA_PKCS                   = 0x00000066
-	CKM_SHA3_224_RSA_PKCS_PSS               = 0x00000067
-	CKM_RC2_KEY_GEN                         = 0x00000100
-	CKM_RC2_ECB                             = 0x00000101
-	CKM_RC2_CBC                             = 0x00000102
-	CKM_RC2_MAC                             = 0x00000103
-	CKM_RC2_MAC_GENERAL                     = 0x00000104
-	CKM_RC2_CBC_PAD                         = 0x00000105
-	CKM_RC4_KEY_GEN                         = 0x00000110
-	CKM_RC4                                 = 0x00000111
-	CKM_DES_KEY_GEN                         = 0x00000120
-	CKM_DES_ECB                             = 0x00000121
-	CKM_DES_CBC                             = 0x00000122
-	CKM_DES_MAC                             = 0x00000123
-	CKM_DES_MAC_GENERAL                     = 0x00000124
-	CKM_DES_CBC_PAD                         = 0x00000125
-	CKM_DES2_KEY_GEN                        = 0x00000130
-	CKM_DES3_KEY_GEN                        = 0x00000131
-	CKM_DES3_ECB                            = 0x00000132
-	CKM_DES3_CBC                            = 0x00000133
-	CKM_DES3_MAC                            = 0x00000134
-	CKM_DES3_MAC_GENERAL                    = 0x00000135
-	CKM_DES3_CBC_PAD                        = 0x00000136
-	CKM_DES3_CMAC_GENERAL                   = 0x00000137
-	CKM_DES3_CMAC                           = 0x00000138
-	CKM_CDMF_KEY_GEN                        = 0x00000140
-	CKM_CDMF_ECB                            = 0x00000141
-	CKM_CDMF_CBC                            = 0x00000142
-	CKM_CDMF_MAC                            = 0x00000143
-	CKM_CDMF_MAC_GENERAL                    = 0x00000144
-	CKM_CDMF_CBC_PAD                        = 0x00000145
-	CKM_DES_OFB64                           = 0x00000150
-	CKM_DES_OFB8                            = 0x00000151
-	CKM_DES_CFB64                           = 0x00000152
-	CKM_DES_CFB8                            = 0x00000153
-	CKM_MD2                                 = 0x00000200
-	CKM_MD2_HMAC                            = 0x00000201
-	CKM_MD2_HMAC_GENERAL                    = 0x00000202
-	CKM_MD5                                 = 0x00000210
-	CKM_MD5_HMAC                            = 0x00000211
-	CKM_MD5_HMAC_GENERAL                    = 0x00000212
-	CKM_SHA_1                               = 0x00000220
-	CKM_SHA_1_HMAC                          = 0x00000221
-	CKM_SHA_1_HMAC_GENERAL                  = 0x00000222
-	CKM_RIPEMD128                           = 0x00000230
-	CKM_RIPEMD128_HMAC                      = 0x00000231
-	CKM_RIPEMD128_HMAC_GENERAL              = 0x00000232
-	CKM_RIPEMD160                           = 0x00000240
-	CKM_RIPEMD160_HMAC                      = 0x00000241
-	CKM_RIPEMD160_HMAC_GENERAL              = 0x00000242
-	CKM_SHA256                              = 0x00000250
-	CKM_SHA256_HMAC                         = 0x00000251
-	CKM_SHA256_HMAC_GENERAL                 = 0x00000252
-	CKM_SHA224                              = 0x00000255
-	CKM_SHA224_HMAC                         = 0x00000256
-	CKM_SHA224_HMAC_GENERAL                 = 0x00000257
-	CKM_SHA384                              = 0x00000260
-	CKM_SHA384_HMAC                         = 0x00000261
-	CKM_SHA384_HMAC_GENERAL                 = 0x00000262
-	CKM_SHA512                              = 0x00000270
-	CKM_SHA512_HMAC                         = 0x00000271
-	CKM_SHA512_HMAC_GENERAL                 = 0x00000272
-	CKM_SECURID_KEY_GEN                     = 0x00000280
-	CKM_SECURID                             = 0x00000282
-	CKM_HOTP_KEY_GEN                        = 0x00000290
-	CKM_HOTP                                = 0x00000291
-	CKM_ACTI                                = 0x000002a0
-	CKM_ACTI_KEY_GEN                        = 0x000002a1
-	CKM_SHA3_256                            = 0x000002b0
-	CKM_SHA3_256_HMAC                       = 0x000002b1
-	CKM_SHA3_256_HMAC_GENERAL               = 0x000002b2
-	CKM_SHA3_256_KEY_GEN                    = 0x000002b3
-	CKM_SHA3_224                            = 0x000002b5
-	CKM_SHA3_224_HMAC                       = 0x000002b6
-	CKM_SHA3_224_HMAC_GENERAL               = 0x000002b7
-	CKM_SHA3_224_KEY_GEN                    = 0x000002b8
-	CKM_SHA3_384                            = 0x000002c0
-	CKM_SHA3_384_HMAC                       = 0x000002c1
-	CKM_SHA3_384_HMAC_GENERAL               = 0x000002c2
-	CKM_SHA3_384_KEY_GEN                    = 0x000002c3
-	CKM_SHA3_512                            = 0x000002d0
-	CKM_SHA3_512_HMAC                       = 0x000002d1
-	CKM_SHA3_512_HMAC_GENERAL               = 0x000002d2
-	CKM_SHA3_512_KEY_GEN                    = 0x000002d3
-	CKM_CAST_KEY_GEN                        = 0x00000300
-	CKM_CAST_ECB                            = 0x00000301
-	CKM_CAST_CBC                            = 0x00000302
-	CKM_CAST_MAC                            = 0x00000303
-	CKM_CAST_MAC_GENERAL                    = 0x00000304
-	CKM_CAST_CBC_PAD                        = 0x00000305
-	CKM_CAST3_KEY_GEN                       = 0x00000310
-	CKM_CAST3_ECB                           = 0x00000311
-	CKM_CAST3_CBC                           = 0x00000312
-	CKM_CAST3_MAC                           = 0x00000313
-	CKM_CAST3_MAC_GENERAL                   = 0x00000314
-	CKM_CAST3_CBC_PAD                       = 0x00000315
-	CKM_CAST5_KEY_GEN                       = 0x00000320
-	CKM_CAST128_KEY_GEN                     = 0x00000320
-	CKM_CAST5_ECB                           = 0x00000321
-	CKM_CAST128_ECB                         = 0x00000321
+	CK_TRUE  = true
+	CK_FALSE = false
+
+	// some special values for certain CK_ULONG variables
+	CK_UNAVAILABLE_INFORMATION = ^uint(0)
+	CK_EFFECTIVELY_INFINITE    = 0
+
+	// The following value is always invalid if used as a session
+	// handle or object handle
+	CK_INVALID_HANDLE = 0
+
+	CKN_SURRENDER   = 0
+	CKN_OTP_CHANGED = 1
+
+	// flags: bit flags that provide capabilities of the slot
+	//
+	//	Bit Flag              Mask        Meaning
+	CKF_TOKEN_PRESENT    = 0x00000001 // a token is there
+	CKF_REMOVABLE_DEVICE = 0x00000002 // removable devices
+	CKF_HW_SLOT          = 0x00000004 // hardware slot
+
+	// The flags parameter is defined as follows:
+	//
+	//	Bit Flag                    Mask        Meaning
+	CKF_RNG                  = 0x00000001 // has random # generator
+	CKF_WRITE_PROTECTED      = 0x00000002 // token is write-protected
+	CKF_LOGIN_REQUIRED       = 0x00000004 // user must login
+	CKF_USER_PIN_INITIALIZED = 0x00000008 // normal user's PIN is set
+
+	// CKF_RESTORE_KEY_NOT_NEEDED.  If it is set,
+	// that means that *every* time the state of cryptographic
+	// operations of a session is successfully saved, all keys
+	// needed to continue those operations are stored in the state
+	CKF_RESTORE_KEY_NOT_NEEDED = 0x00000020
+
+	// CKF_CLOCK_ON_TOKEN.  If it is set, that means
+	// that the token has some sort of clock.  The time on that
+	// clock is returned in the token info structure
+	CKF_CLOCK_ON_TOKEN = 0x00000040
+
+	// CKF_PROTECTED_AUTHENTICATION_PATH.  If it is
+	// set, that means that there is some way for the user to login
+	// without sending a PIN through the Cryptoki library itself
+	CKF_PROTECTED_AUTHENTICATION_PATH = 0x00000100
+
+	// CKF_DUAL_CRYPTO_OPERATIONS.  If it is true,
+	// that means that a single session with the token can perform
+	// dual simultaneous cryptographic operations (digest and
+	// encrypt; decrypt and digest; sign and encrypt; and decrypt
+	// and sign)
+	CKF_DUAL_CRYPTO_OPERATIONS = 0x00000200
+
+	// CKF_TOKEN_INITIALIZED. If it is true, the
+	// token has been initialized using C_InitializeToken or an
+	// equivalent mechanism outside the scope of PKCS #11.
+	// Calling C_InitializeToken when this flag is set will cause
+	// the token to be reinitialized.
+	CKF_TOKEN_INITIALIZED = 0x00000400
+
+	// CKF_SECONDARY_AUTHENTICATION. If it is
+	// true, the token supports secondary authentication for
+	// private key objects.
+	CKF_SECONDARY_AUTHENTICATION = 0x00000800
+
+	// CKF_USER_PIN_COUNT_LOW. If it is true, an
+	// incorrect user login PIN has been entered at least once
+	// since the last successful authentication.
+	CKF_USER_PIN_COUNT_LOW = 0x00010000
+
+	// CKF_USER_PIN_FINAL_TRY. If it is true,
+	// supplying an incorrect user PIN will it to become locked.
+	CKF_USER_PIN_FINAL_TRY = 0x00020000
+
+	// CKF_USER_PIN_LOCKED. If it is true, the
+	// user PIN has been locked. User login to the token is not
+	// possible.
+	CKF_USER_PIN_LOCKED = 0x00040000
+
+	// CKF_USER_PIN_TO_BE_CHANGED. If it is true,
+	// the user PIN value is the default value set by token
+	// initialization or manufacturing, or the PIN has been
+	// expired by the card.
+	CKF_USER_PIN_TO_BE_CHANGED = 0x00080000
+
+	// CKF_SO_PIN_COUNT_LOW. If it is true, an
+	// incorrect SO login PIN has been entered at least once since
+	// the last successful authentication.
+	CKF_SO_PIN_COUNT_LOW = 0x00100000
+
+	// CKF_SO_PIN_FINAL_TRY. If it is true,
+	// supplying an incorrect SO PIN will it to become locked.
+	CKF_SO_PIN_FINAL_TRY = 0x00200000
+
+	// CKF_SO_PIN_LOCKED. If it is true, the SO
+	// PIN has been locked. SO login to the token is not possible.
+	CKF_SO_PIN_LOCKED = 0x00400000
+
+	// CKF_SO_PIN_TO_BE_CHANGED. If it is true,
+	// the SO PIN value is the default value set by token
+	// initialization or manufacturing, or the PIN has been
+	// expired by the card.
+	CKF_SO_PIN_TO_BE_CHANGED = 0x00800000
+
+	// CKF_ERROR_STATE. If it is true, the token failed a FIPS 140
+	// self-test and entered an error state.
+	CKF_ERROR_STATE = 0x01000000
+
+	// CKF_SEED_RANDOM_REQUIRED. If this is true  the token’s
+	// random number generator must be seeded or re-seeded using
+	// C_SeedRandom.
+	CKF_SEED_RANDOM_REQUIRED = 0x02000000
+
+	// CKF_ASYNC_SESSION_SUPPORTED. If this is true the token
+	// supports asynchronous sessions.
+	CKF_ASYNC_SESSION_SUPPORTED = 0x04000000
+
+	// Security Officer
+	CKU_SO = 0
+
+	// Normal user
+	CKU_USER = 1
+
+	// Context specific
+	CKU_CONTEXT_SPECIFIC = 2
+
+	CKS_RO_PUBLIC_SESSION = 0
+	CKS_RO_USER_FUNCTIONS = 1
+	CKS_RW_PUBLIC_SESSION = 2
+	CKS_RW_USER_FUNCTIONS = 3
+	CKS_RW_SO_FUNCTIONS   = 4
+
+	// The flags are defined in the following table:
+	//
+	//	Bit Flag                    Mask         Meaning
+	CKF_RW_SESSION     = 0x00000002 // session is r/w
+	CKF_SERIAL_SESSION = 0x00000004 // no parallel
+	CKF_ASYNC_SESSION  = 0x00000008 // session is async
+
+	// The following classes of objects are defined:
+	CKO_DATA              = 0x00000000
+	CKO_CERTIFICATE       = 0x00000001
+	CKO_PUBLIC_KEY        = 0x00000002
+	CKO_PRIVATE_KEY       = 0x00000003
+	CKO_SECRET_KEY        = 0x00000004
+	CKO_HW_FEATURE        = 0x00000005
+	CKO_DOMAIN_PARAMETERS = 0x00000006
+	CKO_MECHANISM         = 0x00000007
+	CKO_OTP_KEY           = 0x00000008
+	CKO_PROFILE           = 0x00000009
+	CKO_VALIDATION        = 0x0000000a
+	CKO_TRUST             = 0x0000000b
+	CKO_VENDOR_DEFINED    = 0x80000000
+
+	// Profile ID's
+	CKP_INVALID_ID                = 0x00000000 // Profile
+	CKP_BASELINE_PROVIDER         = 0x00000001 // Profile
+	CKP_EXTENDED_PROVIDER         = 0x00000002 // Profile
+	CKP_AUTHENTICATION_TOKEN      = 0x00000003 // Profile
+	CKP_PUBLIC_CERTIFICATES_TOKEN = 0x00000004 // Profile
+	CKP_COMPLETE_PROVIDER         = 0x00000005 // Profile
+	CKP_HKDF_TLS_TOKEN            = 0x00000006 // Profile
+	CKP_VENDOR_DEFINED            = 0x80000000 // Profile
+
+	// The following hardware feature types are defined
+	CKH_MONOTONIC_COUNTER = 0x00000001
+	CKH_CLOCK             = 0x00000002
+	CKH_USER_INTERFACE    = 0x00000003
+	CKH_VENDOR_DEFINED    = 0x80000000
+
+	// the following key types are defined:
+	CKK_RSA            = 0x00000000
+	CKK_DSA            = 0x00000001
+	CKK_DH             = 0x00000002
+	CKK_ECDSA          = 0x00000003 // Deprecated
+	CKK_EC             = 0x00000003
+	CKK_X9_42_DH       = 0x00000004
+	CKK_KEA            = 0x00000005 // Historical
+	CKK_GENERIC_SECRET = 0x00000010
+	CKK_RC2            = 0x00000011 // Historical
+	CKK_RC4            = 0x00000012 // Historical
+	CKK_DES            = 0x00000013 // Historical
+	CKK_DES2           = 0x00000014
+	CKK_DES3           = 0x00000015
+	CKK_CAST           = 0x00000016 // Historical
+	CKK_CAST3          = 0x00000017 // Historical
+	CKK_CAST5          = 0x00000018 // Deprecated
+	CKK_CAST128        = 0x00000018 // Historical
+	CKK_RC5            = 0x00000019 // Historical
+	CKK_IDEA           = 0x0000001A // Historical
+	CKK_SKIPJACK       = 0x0000001B // Historical
+	CKK_BATON          = 0x0000001C // Historical
+	CKK_JUNIPER        = 0x0000001D // Historical
+	CKK_CDMF           = 0x0000001E // Historical
+	CKK_AES            = 0x0000001F
+	CKK_BLOWFISH       = 0x00000020
+	CKK_TWOFISH        = 0x00000021
+	CKK_SECURID        = 0x00000022
+	CKK_HOTP           = 0x00000023 // Historical
+	CKK_ACTI           = 0x00000024 // Historical
+	CKK_CAMELLIA       = 0x00000025
+	CKK_ARIA           = 0x00000026
+
+	// the following definitions were added in the 2.30 header file,
+	// but never defined in the spec.
+	CKK_MD5_HMAC         = 0x00000027 // Historical
+	CKK_SHA_1_HMAC       = 0x00000028
+	CKK_RIPEMD128_HMAC   = 0x00000029 // Historical
+	CKK_RIPEMD160_HMAC   = 0x0000002A // Historical
+	CKK_SHA256_HMAC      = 0x0000002B
+	CKK_SHA384_HMAC      = 0x0000002C
+	CKK_SHA512_HMAC      = 0x0000002D
+	CKK_SHA224_HMAC      = 0x0000002E
+	CKK_SEED             = 0x0000002F
+	CKK_GOSTR3410        = 0x00000030
+	CKK_GOSTR3411        = 0x00000031
+	CKK_GOST28147        = 0x00000032
+	CKK_CHACHA20         = 0x00000033
+	CKK_POLY1305         = 0x00000034
+	CKK_AES_XTS          = 0x00000035
+	CKK_SHA3_224_HMAC    = 0x00000036
+	CKK_SHA3_256_HMAC    = 0x00000037
+	CKK_SHA3_384_HMAC    = 0x00000038
+	CKK_SHA3_512_HMAC    = 0x00000039
+	CKK_BLAKE2B_160_HMAC = 0x0000003a
+	CKK_BLAKE2B_256_HMAC = 0x0000003b
+	CKK_BLAKE2B_384_HMAC = 0x0000003c
+	CKK_BLAKE2B_512_HMAC = 0x0000003d
+	CKK_SALSA20          = 0x0000003e
+	CKK_X2RATCHET        = 0x0000003f
+	CKK_EC_EDWARDS       = 0x00000040
+	CKK_EC_MONTGOMERY    = 0x00000041
+	CKK_HKDF             = 0x00000042
+	CKK_SHA512_224_HMAC  = 0x00000043
+	CKK_SHA512_256_HMAC  = 0x00000044
+	CKK_SHA512_T_HMAC    = 0x00000045
+	CKK_HSS              = 0x00000046
+	CKK_XMSS             = 0x00000047
+	CKK_XMSSMT           = 0x00000048
+	CKK_ML_KEM           = 0x00000049
+	CKK_ML_DSA           = 0x0000004a
+	CKK_SLH_DSA          = 0x0000004b
+	CKK_VENDOR_DEFINED   = 0x80000000
+
+	CK_CERTIFICATE_CATEGORY_UNSPECIFIED  = 0
+	CK_CERTIFICATE_CATEGORY_TOKEN_USER   = 1
+	CK_CERTIFICATE_CATEGORY_AUTHORITY    = 2
+	CK_CERTIFICATE_CATEGORY_OTHER_ENTITY = 3
+	CK_SECURITY_DOMAIN_UNSPECIFIED       = 0
+	CK_SECURITY_DOMAIN_MANUFACTURER      = 1
+	CK_SECURITY_DOMAIN_OPERATOR          = 2
+	CK_SECURITY_DOMAIN_THIRD_PARTY       = 3
+
+	// The following certificate types are defined:
+	CKC_X_509           = 0x00000000
+	CKC_X_509_ATTR_CERT = 0x00000001
+	CKC_WTLS            = 0x00000002
+	CKC_VENDOR_DEFINED  = 0x80000000
+
+	// The CKF_ARRAY_ATTRIBUTE flag identifies an attribute which
+	// consists of an array of values.
+	CKF_ARRAY_ATTRIBUTE = 0x40000000
+
+	// The following OTP-related defines relate to the CKA_OTP_FORMAT attribute
+	CK_OTP_FORMAT_DECIMAL      = 0
+	CK_OTP_FORMAT_HEXADECIMAL  = 1
+	CK_OTP_FORMAT_ALPHANUMERIC = 2
+	CK_OTP_FORMAT_BINARY       = 3
+
+	// The following OTP-related defines relate to the CKA_OTP_..._REQUIREMENT
+	// attributes
+	CK_OTP_PARAM_IGNORED   = 0
+	CK_OTP_PARAM_OPTIONAL  = 1
+	CK_OTP_PARAM_MANDATORY = 2
+
+	// The following attribute types are defined:
+	CKA_CLASS                      = 0x00000000
+	CKA_TOKEN                      = 0x00000001
+	CKA_PRIVATE                    = 0x00000002
+	CKA_LABEL                      = 0x00000003
+	CKA_UNIQUE_ID                  = 0x00000004
+	CKA_APPLICATION                = 0x00000010
+	CKA_VALUE                      = 0x00000011
+	CKA_OBJECT_ID                  = 0x00000012
+	CKA_CERTIFICATE_TYPE           = 0x00000080
+	CKA_ISSUER                     = 0x00000081
+	CKA_SERIAL_NUMBER              = 0x00000082
+	CKA_AC_ISSUER                  = 0x00000083
+	CKA_OWNER                      = 0x00000084
+	CKA_ATTR_TYPES                 = 0x00000085
+	CKA_TRUSTED                    = 0x00000086
+	CKA_CERTIFICATE_CATEGORY       = 0x00000087
+	CKA_JAVA_MIDP_SECURITY_DOMAIN  = 0x00000088
+	CKA_URL                        = 0x00000089
+	CKA_HASH_OF_SUBJECT_PUBLIC_KEY = 0x0000008a
+	CKA_HASH_OF_ISSUER_PUBLIC_KEY  = 0x0000008b
+	CKA_NAME_HASH_ALGORITHM        = 0x0000008c
+	CKA_CHECK_VALUE                = 0x00000090
+	CKA_KEY_TYPE                   = 0x00000100
+	CKA_SUBJECT                    = 0x00000101
+	CKA_ID                         = 0x00000102
+	CKA_SENSITIVE                  = 0x00000103
+	CKA_ENCRYPT                    = 0x00000104
+	CKA_DECRYPT                    = 0x00000105
+	CKA_WRAP                       = 0x00000106
+	CKA_UNWRAP                     = 0x00000107
+	CKA_SIGN                       = 0x00000108
+	CKA_SIGN_RECOVER               = 0x00000109
+	CKA_VERIFY                     = 0x0000010a
+	CKA_VERIFY_RECOVER             = 0x0000010b
+	CKA_DERIVE                     = 0x0000010c
+	CKA_START_DATE                 = 0x00000110
+	CKA_END_DATE                   = 0x00000111
+	CKA_MODULUS                    = 0x00000120
+	CKA_MODULUS_BITS               = 0x00000121
+	CKA_PUBLIC_EXPONENT            = 0x00000122
+	CKA_PRIVATE_EXPONENT           = 0x00000123
+	CKA_PRIME_1                    = 0x00000124
+	CKA_PRIME_2                    = 0x00000125
+	CKA_EXPONENT_1                 = 0x00000126
+	CKA_EXPONENT_2                 = 0x00000127
+	CKA_COEFFICIENT                = 0x00000128
+	CKA_PUBLIC_KEY_INFO            = 0x00000129
+	CKA_PRIME                      = 0x00000130
+	CKA_SUBPRIME                   = 0x00000131
+	CKA_BASE                       = 0x00000132
+	CKA_PRIME_BITS                 = 0x00000133
+	CKA_SUBPRIME_BITS              = 0x00000134
+	CKA_SUB_PRIME_BITS             = CKA_SUBPRIME_BITS
+	CKA_VALUE_BITS                 = 0x00000160
+	CKA_VALUE_LEN                  = 0x00000161
+	CKA_EXTRACTABLE                = 0x00000162
+	CKA_LOCAL                      = 0x00000163
+	CKA_NEVER_EXTRACTABLE          = 0x00000164
+	CKA_ALWAYS_SENSITIVE           = 0x00000165
+	CKA_KEY_GEN_MECHANISM          = 0x00000166
+	CKA_MODIFIABLE                 = 0x00000170
+	CKA_COPYABLE                   = 0x00000171
+	CKA_DESTROYABLE                = 0x00000172
+	CKA_ECDSA_PARAMS               = 0x00000180 // Deprecated
+	CKA_EC_PARAMS                  = 0x00000180
+	CKA_EC_POINT                   = 0x00000181
+	CKA_SECONDARY_AUTH             = 0x00000200 // Deprecated
+	CKA_AUTH_PIN_FLAGS             = 0x00000201 // Deprecated
+	CKA_ALWAYS_AUTHENTICATE        = 0x00000202
+	CKA_WRAP_WITH_TRUSTED          = 0x00000210
+	CKA_WRAP_TEMPLATE              = (CKF_ARRAY_ATTRIBUTE | 0x00000211)
+	CKA_UNWRAP_TEMPLATE            = (CKF_ARRAY_ATTRIBUTE | 0x00000212)
+	CKA_DERIVE_TEMPLATE            = (CKF_ARRAY_ATTRIBUTE | 0x00000213)
+	CKA_OTP_FORMAT                 = 0x00000220
+	CKA_OTP_LENGTH                 = 0x00000221
+	CKA_OTP_TIME_INTERVAL          = 0x00000222
+	CKA_OTP_USER_FRIENDLY_MODE     = 0x00000223
+	CKA_OTP_CHALLENGE_REQUIREMENT  = 0x00000224
+	CKA_OTP_TIME_REQUIREMENT       = 0x00000225
+	CKA_OTP_COUNTER_REQUIREMENT    = 0x00000226
+	CKA_OTP_PIN_REQUIREMENT        = 0x00000227
+	CKA_OTP_COUNTER                = 0x0000022e
+	CKA_OTP_TIME                   = 0x0000022f
+	CKA_OTP_USER_IDENTIFIER        = 0x0000022a
+	CKA_OTP_SERVICE_IDENTIFIER     = 0x0000022b
+	CKA_OTP_SERVICE_LOGO           = 0x0000022c
+	CKA_OTP_SERVICE_LOGO_TYPE      = 0x0000022d
+	CKA_GOSTR3410_PARAMS           = 0x00000250
+	CKA_GOSTR3411_PARAMS           = 0x00000251
+	CKA_GOST28147_PARAMS           = 0x00000252
+	CKA_HW_FEATURE_TYPE            = 0x00000300
+	CKA_RESET_ON_INIT              = 0x00000301
+	CKA_HAS_RESET                  = 0x00000302
+	CKA_PIXEL_X                    = 0x00000400
+	CKA_PIXEL_Y                    = 0x00000401
+	CKA_RESOLUTION                 = 0x00000402
+	CKA_CHAR_ROWS                  = 0x00000403
+	CKA_CHAR_COLUMNS               = 0x00000404
+	CKA_COLOR                      = 0x00000405
+	CKA_BITS_PER_PIXEL             = 0x00000406
+	CKA_CHAR_SETS                  = 0x00000480
+	CKA_ENCODING_METHODS           = 0x00000481
+	CKA_MIME_TYPES                 = 0x00000482
+	CKA_MECHANISM_TYPE             = 0x00000500
+	CKA_REQUIRED_CMS_ATTRIBUTES    = 0x00000501
+	CKA_DEFAULT_CMS_ATTRIBUTES     = 0x00000502
+	CKA_SUPPORTED_CMS_ATTRIBUTES   = 0x00000503
+	CKA_ALLOWED_MECHANISMS         = (CKF_ARRAY_ATTRIBUTE | 0x00000600)
+	CKA_PROFILE_ID                 = 0x00000601
+	CKA_X2RATCHET_BAG              = 0x00000602
+	CKA_X2RATCHET_BAGSIZE          = 0x00000603
+	CKA_X2RATCHET_BOBS1STMSG       = 0x00000604
+	CKA_X2RATCHET_CKR              = 0x00000605
+	CKA_X2RATCHET_CKS              = 0x00000606
+	CKA_X2RATCHET_DHP              = 0x00000607
+	CKA_X2RATCHET_DHR              = 0x00000608
+	CKA_X2RATCHET_DHS              = 0x00000609
+	CKA_X2RATCHET_HKR              = 0x0000060a
+	CKA_X2RATCHET_HKS              = 0x0000060b
+	CKA_X2RATCHET_ISALICE          = 0x0000060c
+	CKA_X2RATCHET_NHKR             = 0x0000060d
+	CKA_X2RATCHET_NHKS             = 0x0000060e
+	CKA_X2RATCHET_NR               = 0x0000060f
+	CKA_X2RATCHET_NS               = 0x00000610
+	CKA_X2RATCHET_PNS              = 0x00000611
+	CKA_X2RATCHET_RK               = 0x00000612
+
+	// HSS
+	CKA_HSS_LEVELS         = 0x00000617
+	CKA_HSS_LMS_TYPE       = 0x00000618
+	CKA_HSS_LMOTS_TYPE     = 0x00000619
+	CKA_HSS_LMS_TYPES      = 0x0000061a
+	CKA_HSS_LMOTS_TYPES    = 0x0000061b
+	CKA_HSS_KEYS_REMAINING = 0x0000061c
+
+	// new post-quantum (general)
+	CKA_PARAMETER_SET = 0x0000061d
+
+	// validation objects
+	CKA_OBJECT_VALIDATION_FLAGS           = 0x0000061e
+	CKA_VALIDATION_TYPE                   = 0x0000061f
+	CKA_VALIDATION_VERSION                = 0x00000620
+	CKA_VALIDATION_LEVEL                  = 0x00000621
+	CKA_VALIDATION_MODULE_ID              = 0x00000622
+	CKA_VALIDATION_FLAG                   = 0x00000623
+	CKA_VALIDATION_AUTHORITY_TYPE         = 0x00000624
+	CKA_VALIDATION_COUNTRY                = 0x00000625
+	CKA_VALIDATION_CERTIFICATE_IDENTIFIER = 0x00000626
+	CKA_VALIDATION_CERTIFICATE_URI        = 0x00000627
+	CKA_VALIDATION_VENDOR_URI             = 0x00000628
+	CKA_VALIDATION_PROFILE                = 0x00000629
+
+	// KEM
+	CKA_ENCAPSULATE_TEMPLATE = 0x0000062a
+	CKA_DECAPSULATE_TEMPLATE = 0x0000062b
+
+	// trust objects
+	CKA_TRUST_SERVER_AUTH      = 0x0000062c
+	CKA_TRUST_CLIENT_AUTH      = 0x0000062d
+	CKA_TRUST_CODE_SIGNING     = 0x0000062e
+	CKA_TRUST_EMAIL_PROTECTION = 0x0000062f
+	CKA_TRUST_IPSEC_IKE        = 0x00000630
+	CKA_TRUST_TIME_STAMPING    = 0x00000631
+	CKA_TRUST_OCSP_SIGNING     = 0x00000632
+	CKA_ENCAPSULATE            = 0x00000633
+	CKA_DECAPSULATE            = 0x00000634
+	CKA_HASH_OF_CERTIFICATE    = 0x00000635
+
+	// linking pubic and private keys
+	CKA_PUBLIC_CRC64_VALUE = 0x00000636
+
+	// new post-quantum (general)
+	CKA_SEED           = 0x00000637
+	CKA_VENDOR_DEFINED = 0x80000000
+
+	// the following mechanism types are defined:
+	CKM_RSA_PKCS_KEY_PAIR_GEN     = 0x00000000
+	CKM_RSA_PKCS                  = 0x00000001
+	CKM_RSA_9796                  = 0x00000002
+	CKM_RSA_X_509                 = 0x00000003
+	CKM_MD2_RSA_PKCS              = 0x00000004
+	CKM_MD5_RSA_PKCS              = 0x00000005
+	CKM_SHA1_RSA_PKCS             = 0x00000006
+	CKM_RIPEMD128_RSA_PKCS        = 0x00000007
+	CKM_RIPEMD160_RSA_PKCS        = 0x00000008
+	CKM_RSA_PKCS_OAEP             = 0x00000009
+	CKM_RSA_X9_31_KEY_PAIR_GEN    = 0x0000000a
+	CKM_RSA_X9_31                 = 0x0000000b
+	CKM_SHA1_RSA_X9_31            = 0x0000000c
+	CKM_RSA_PKCS_PSS              = 0x0000000d
+	CKM_SHA1_RSA_PKCS_PSS         = 0x0000000e
+	CKM_DSA_KEY_PAIR_GEN          = 0x00000010
+	CKM_DSA                       = 0x00000011
+	CKM_DSA_SHA1                  = 0x00000012
+	CKM_DSA_SHA224                = 0x00000013
+	CKM_DSA_SHA256                = 0x00000014
+	CKM_DSA_SHA384                = 0x00000015
+	CKM_DSA_SHA512                = 0x00000016
+	CKM_DSA_SHA3_224              = 0x00000018
+	CKM_DSA_SHA3_256              = 0x00000019
+	CKM_DSA_SHA3_384              = 0x0000001a
+	CKM_DSA_SHA3_512              = 0x0000001b
+	CKM_DH_PKCS_KEY_PAIR_GEN      = 0x00000020
+	CKM_DH_PKCS_DERIVE            = 0x00000021
+	CKM_X9_42_DH_KEY_PAIR_GEN     = 0x00000030
+	CKM_X9_42_DH_DERIVE           = 0x00000031
+	CKM_X9_42_DH_HYBRID_DERIVE    = 0x00000032
+	CKM_X9_42_MQV_DERIVE          = 0x00000033
+	CKM_SHA256_RSA_PKCS           = 0x00000040
+	CKM_SHA384_RSA_PKCS           = 0x00000041
+	CKM_SHA512_RSA_PKCS           = 0x00000042
+	CKM_SHA256_RSA_PKCS_PSS       = 0x00000043
+	CKM_SHA384_RSA_PKCS_PSS       = 0x00000044
+	CKM_SHA512_RSA_PKCS_PSS       = 0x00000045
+	CKM_SHA224_RSA_PKCS           = 0x00000046
+	CKM_SHA224_RSA_PKCS_PSS       = 0x00000047
+	CKM_SHA512_224                = 0x00000048
+	CKM_SHA512_224_HMAC           = 0x00000049
+	CKM_SHA512_224_HMAC_GENERAL   = 0x0000004a
+	CKM_SHA512_224_KEY_DERIVATION = 0x0000004b
+	CKM_SHA512_256                = 0x0000004c
+	CKM_SHA512_256_HMAC           = 0x0000004d
+	CKM_SHA512_256_HMAC_GENERAL   = 0x0000004e
+	CKM_SHA512_256_KEY_DERIVATION = 0x0000004f
+	CKM_SHA512_T                  = 0x00000050
+	CKM_SHA512_T_HMAC             = 0x00000051
+	CKM_SHA512_T_HMAC_GENERAL     = 0x00000052
+	CKM_SHA512_T_KEY_DERIVATION   = 0x00000053
+	CKM_SHA3_256_RSA_PKCS         = 0x00000060
+	CKM_SHA3_384_RSA_PKCS         = 0x00000061
+	CKM_SHA3_512_RSA_PKCS         = 0x00000062
+	CKM_SHA3_256_RSA_PKCS_PSS     = 0x00000063
+	CKM_SHA3_384_RSA_PKCS_PSS     = 0x00000064
+	CKM_SHA3_512_RSA_PKCS_PSS     = 0x00000065
+	CKM_SHA3_224_RSA_PKCS         = 0x00000066
+	CKM_SHA3_224_RSA_PKCS_PSS     = 0x00000067
+	CKM_RC2_KEY_GEN               = 0x00000100 // Historical
+	CKM_RC2_ECB                   = 0x00000101 // Historical
+	CKM_RC2_CBC                   = 0x00000102 // Historical
+	CKM_RC2_MAC                   = 0x00000103 // Historical
+	CKM_RC2_MAC_GENERAL           = 0x00000104 // Historical
+	CKM_RC2_CBC_PAD               = 0x00000105 // Historical
+	CKM_RC4_KEY_GEN               = 0x00000110 // Historical
+	CKM_RC4                       = 0x00000111 // Historical
+	CKM_DES_KEY_GEN               = 0x00000120 // Historical
+	CKM_DES_ECB                   = 0x00000121 // Historical
+	CKM_DES_CBC                   = 0x00000122 // Historical
+	CKM_DES_MAC                   = 0x00000123 // Historical
+	CKM_DES_MAC_GENERAL           = 0x00000124 // Historical
+	CKM_DES_CBC_PAD               = 0x00000125 // Historical
+	CKM_DES2_KEY_GEN              = 0x00000130
+	CKM_DES3_KEY_GEN              = 0x00000131
+	CKM_DES3_ECB                  = 0x00000132
+	CKM_DES3_CBC                  = 0x00000133
+	CKM_DES3_MAC                  = 0x00000134
+	CKM_DES3_MAC_GENERAL          = 0x00000135
+	CKM_DES3_CBC_PAD              = 0x00000136
+	CKM_DES3_CMAC_GENERAL         = 0x00000137
+	CKM_DES3_CMAC                 = 0x00000138
+	CKM_CDMF_KEY_GEN              = 0x00000140 // Historical
+	CKM_CDMF_ECB                  = 0x00000141 // Historical
+	CKM_CDMF_CBC                  = 0x00000142 // Historical
+	CKM_CDMF_MAC                  = 0x00000143 // Historical
+	CKM_CDMF_MAC_GENERAL          = 0x00000144 // Historical
+	CKM_CDMF_CBC_PAD              = 0x00000145 // Historical
+	CKM_DES_OFB64                 = 0x00000150
+	CKM_DES_OFB8                  = 0x00000151
+	CKM_DES_CFB64                 = 0x00000152
+	CKM_DES_CFB8                  = 0x00000153
+	CKM_MD2                       = 0x00000200 // Historical
+	CKM_MD2_HMAC                  = 0x00000201 // Historical
+	CKM_MD2_HMAC_GENERAL          = 0x00000202 // Historical
+	CKM_MD5                       = 0x00000210 // Historical
+	CKM_MD5_HMAC                  = 0x00000211 // Historical
+	CKM_MD5_HMAC_GENERAL          = 0x00000212 // Historical
+	CKM_SHA_1                     = 0x00000220
+	CKM_SHA_1_HMAC                = 0x00000221
+	CKM_SHA_1_HMAC_GENERAL        = 0x00000222
+	CKM_RIPEMD128                 = 0x00000230 // Historical
+	CKM_RIPEMD128_HMAC            = 0x00000231 // Historical
+	CKM_RIPEMD128_HMAC_GENERAL    = 0x00000232 // Historical
+	CKM_RIPEMD160                 = 0x00000240 // Historical
+	CKM_RIPEMD160_HMAC            = 0x00000241 // Historical
+	CKM_RIPEMD160_HMAC_GENERAL    = 0x00000242 // Historical
+	CKM_SHA256                    = 0x00000250
+	CKM_SHA256_HMAC               = 0x00000251
+	CKM_SHA256_HMAC_GENERAL       = 0x00000252
+	CKM_SHA224                    = 0x00000255
+	CKM_SHA224_HMAC               = 0x00000256
+	CKM_SHA224_HMAC_GENERAL       = 0x00000257
+	CKM_SHA384                    = 0x00000260
+	CKM_SHA384_HMAC               = 0x00000261
+	CKM_SHA384_HMAC_GENERAL       = 0x00000262
+	CKM_SHA512                    = 0x00000270
+	CKM_SHA512_HMAC               = 0x00000271
+	CKM_SHA512_HMAC_GENERAL       = 0x00000272
+	CKM_SECURID_KEY_GEN           = 0x00000280
+	CKM_SECURID                   = 0x00000282
+	CKM_HOTP_KEY_GEN              = 0x00000290
+	CKM_HOTP                      = 0x00000291
+	CKM_ACTI                      = 0x000002a0
+	CKM_ACTI_KEY_GEN              = 0x000002a1
+	CKM_SHA3_256                  = 0x000002b0
+	CKM_SHA3_256_HMAC             = 0x000002b1
+	CKM_SHA3_256_HMAC_GENERAL     = 0x000002b2
+	CKM_SHA3_256_KEY_GEN          = 0x000002b3
+	CKM_SHA3_224                  = 0x000002b5
+	CKM_SHA3_224_HMAC             = 0x000002b6
+	CKM_SHA3_224_HMAC_GENERAL     = 0x000002b7
+	CKM_SHA3_224_KEY_GEN          = 0x000002b8
+	CKM_SHA3_384                  = 0x000002c0
+	CKM_SHA3_384_HMAC             = 0x000002c1
+	CKM_SHA3_384_HMAC_GENERAL     = 0x000002c2
+	CKM_SHA3_384_KEY_GEN          = 0x000002c3
+	CKM_SHA3_512                  = 0x000002d0
+	CKM_SHA3_512_HMAC             = 0x000002d1
+	CKM_SHA3_512_HMAC_GENERAL     = 0x000002d2
+	CKM_SHA3_512_KEY_GEN          = 0x000002d3
+	CKM_CAST_KEY_GEN              = 0x00000300 // Historical
+	CKM_CAST_ECB                  = 0x00000301 // Historical
+	CKM_CAST_CBC                  = 0x00000302 // Historical
+	CKM_CAST_MAC                  = 0x00000303 // Historical
+	CKM_CAST_MAC_GENERAL          = 0x00000304 // Historical
+	CKM_CAST_CBC_PAD              = 0x00000305 // Historical
+	CKM_CAST3_KEY_GEN             = 0x00000310 // Historical
+	CKM_CAST3_ECB                 = 0x00000311 // Historical
+	CKM_CAST3_CBC                 = 0x00000312 // Historical
+	CKM_CAST3_MAC                 = 0x00000313 // Historical
+	CKM_CAST3_MAC_GENERAL         = 0x00000314 // Historical
+	CKM_CAST3_CBC_PAD             = 0x00000315 // Historical
+
+	// Note that CAST128 and CAST5 are the same algorithm
+	CKM_CAST5_KEY_GEN                       = 0x00000320 // Historical
+	CKM_CAST128_KEY_GEN                     = 0x00000320 // Historical
+	CKM_CAST5_ECB                           = 0x00000321 // Historical
+	CKM_CAST128_ECB                         = 0x00000321 // Historical
 	CKM_CAST5_CBC                           = 0x00000322 // Deprecated
-	CKM_CAST128_CBC                         = 0x00000322
+	CKM_CAST128_CBC                         = 0x00000322 // Historical
 	CKM_CAST5_MAC                           = 0x00000323 // Deprecated
-	CKM_CAST128_MAC                         = 0x00000323
+	CKM_CAST128_MAC                         = 0x00000323 // Historical
 	CKM_CAST5_MAC_GENERAL                   = 0x00000324 // Deprecated
-	CKM_CAST128_MAC_GENERAL                 = 0x00000324
+	CKM_CAST128_MAC_GENERAL                 = 0x00000324 // Historical
 	CKM_CAST5_CBC_PAD                       = 0x00000325 // Deprecated
-	CKM_CAST128_CBC_PAD                     = 0x00000325
-	CKM_RC5_KEY_GEN                         = 0x00000330
-	CKM_RC5_ECB                             = 0x00000331
-	CKM_RC5_CBC                             = 0x00000332
-	CKM_RC5_MAC                             = 0x00000333
-	CKM_RC5_MAC_GENERAL                     = 0x00000334
-	CKM_RC5_CBC_PAD                         = 0x00000335
-	CKM_IDEA_KEY_GEN                        = 0x00000340
-	CKM_IDEA_ECB                            = 0x00000341
-	CKM_IDEA_CBC                            = 0x00000342
-	CKM_IDEA_MAC                            = 0x00000343
-	CKM_IDEA_MAC_GENERAL                    = 0x00000344
-	CKM_IDEA_CBC_PAD                        = 0x00000345
+	CKM_CAST128_CBC_PAD                     = 0x00000325 // Historical
+	CKM_RC5_KEY_GEN                         = 0x00000330 // Historical
+	CKM_RC5_ECB                             = 0x00000331 // Historical
+	CKM_RC5_CBC                             = 0x00000332 // Historical
+	CKM_RC5_MAC                             = 0x00000333 // Historical
+	CKM_RC5_MAC_GENERAL                     = 0x00000334 // Historical
+	CKM_RC5_CBC_PAD                         = 0x00000335 // Historical
+	CKM_IDEA_KEY_GEN                        = 0x00000340 // Historical
+	CKM_IDEA_ECB                            = 0x00000341 // Historical
+	CKM_IDEA_CBC                            = 0x00000342 // Historical
+	CKM_IDEA_MAC                            = 0x00000343 // Historical
+	CKM_IDEA_MAC_GENERAL                    = 0x00000344 // Historical
+	CKM_IDEA_CBC_PAD                        = 0x00000345 // Historical
 	CKM_GENERIC_SECRET_KEY_GEN              = 0x00000350
 	CKM_CONCATENATE_BASE_AND_KEY            = 0x00000360
 	CKM_CONCATENATE_BASE_AND_DATA           = 0x00000362
@@ -520,8 +657,8 @@ const (
 	CKM_TLS_PRF                             = 0x00000378
 	CKM_SSL3_MD5_MAC                        = 0x00000380
 	CKM_SSL3_SHA1_MAC                       = 0x00000381
-	CKM_MD5_KEY_DERIVATION                  = 0x00000390
-	CKM_MD2_KEY_DERIVATION                  = 0x00000391
+	CKM_MD5_KEY_DERIVATION                  = 0x00000390 // Historical
+	CKM_MD2_KEY_DERIVATION                  = 0x00000391 // Historical
 	CKM_SHA1_KEY_DERIVATION                 = 0x00000392
 	CKM_SHA256_KEY_DERIVATION               = 0x00000393
 	CKM_SHA384_KEY_DERIVATION               = 0x00000394
@@ -539,16 +676,16 @@ const (
 	CKM_SHA3_512_KEY_DERIVE                 = CKM_SHA3_512_KEY_DERIVATION
 	CKM_SHAKE_128_KEY_DERIVE                = CKM_SHAKE_128_KEY_DERIVATION
 	CKM_SHAKE_256_KEY_DERIVE                = CKM_SHAKE_256_KEY_DERIVATION
-	CKM_PBE_MD2_DES_CBC                     = 0x000003a0
-	CKM_PBE_MD5_DES_CBC                     = 0x000003a1
-	CKM_PBE_MD5_CAST_CBC                    = 0x000003a2
-	CKM_PBE_MD5_CAST3_CBC                   = 0x000003a3
+	CKM_PBE_MD2_DES_CBC                     = 0x000003a0 // Historical
+	CKM_PBE_MD5_DES_CBC                     = 0x000003a1 // Historical
+	CKM_PBE_MD5_CAST_CBC                    = 0x000003a2 // Historical
+	CKM_PBE_MD5_CAST3_CBC                   = 0x000003a3 // Historical
 	CKM_PBE_MD5_CAST5_CBC                   = 0x000003a4 // Deprecated
-	CKM_PBE_MD5_CAST128_CBC                 = 0x000003a4
+	CKM_PBE_MD5_CAST128_CBC                 = 0x000003a4 // Historical
 	CKM_PBE_SHA1_CAST5_CBC                  = 0x000003a5 // Deprecated
-	CKM_PBE_SHA1_CAST128_CBC                = 0x000003a5
-	CKM_PBE_SHA1_RC4_128                    = 0x000003a6
-	CKM_PBE_SHA1_RC4_40                     = 0x000003a7
+	CKM_PBE_SHA1_CAST128_CBC                = 0x000003a5 // Historical
+	CKM_PBE_SHA1_RC4_128                    = 0x000003a6 // Historical
+	CKM_PBE_SHA1_RC4_40                     = 0x000003a7 // Historical
 	CKM_PBE_SHA1_DES3_EDE_CBC               = 0x000003a8
 	CKM_PBE_SHA1_DES2_EDE_CBC               = 0x000003a9
 	CKM_PBE_SHA1_RC2_128_CBC                = 0x000003aa
@@ -585,7 +722,7 @@ const (
 	CKM_CAMELLIA_CBC_PAD                    = 0x00000555
 	CKM_CAMELLIA_ECB_ENCRYPT_DATA           = 0x00000556
 	CKM_CAMELLIA_CBC_ENCRYPT_DATA           = 0x00000557
-	CKM_CAMELLIA_CTR                        = 0x00000558
+	CKM_CAMELLIA_CTR                        = 0x00000558 // Historical
 	CKM_ARIA_KEY_GEN                        = 0x00000560
 	CKM_ARIA_ECB                            = 0x00000561
 	CKM_ARIA_CBC                            = 0x00000562
@@ -602,28 +739,28 @@ const (
 	CKM_SEED_CBC_PAD                        = 0x00000655
 	CKM_SEED_ECB_ENCRYPT_DATA               = 0x00000656
 	CKM_SEED_CBC_ENCRYPT_DATA               = 0x00000657
-	CKM_SKIPJACK_KEY_GEN                    = 0x00001000
-	CKM_SKIPJACK_ECB64                      = 0x00001001
-	CKM_SKIPJACK_CBC64                      = 0x00001002
-	CKM_SKIPJACK_OFB64                      = 0x00001003
-	CKM_SKIPJACK_CFB64                      = 0x00001004
-	CKM_SKIPJACK_CFB32                      = 0x00001005
-	CKM_SKIPJACK_CFB16                      = 0x00001006
-	CKM_SKIPJACK_CFB8                       = 0x00001007
-	CKM_SKIPJACK_WRAP                       = 0x00001008
-	CKM_SKIPJACK_PRIVATE_WRAP               = 0x00001009
-	CKM_SKIPJACK_RELAYX                     = 0x0000100a
-	CKM_KEA_KEY_PAIR_GEN                    = 0x00001010
-	CKM_KEA_KEY_DERIVE                      = 0x00001011
-	CKM_KEA_DERIVE                          = 0x00001012
-	CKM_FORTEZZA_TIMESTAMP                  = 0x00001020
-	CKM_BATON_KEY_GEN                       = 0x00001030
-	CKM_BATON_ECB128                        = 0x00001031
-	CKM_BATON_ECB96                         = 0x00001032
-	CKM_BATON_CBC128                        = 0x00001033
-	CKM_BATON_COUNTER                       = 0x00001034
-	CKM_BATON_SHUFFLE                       = 0x00001035
-	CKM_BATON_WRAP                          = 0x00001036
+	CKM_SKIPJACK_KEY_GEN                    = 0x00001000 // Historical
+	CKM_SKIPJACK_ECB64                      = 0x00001001 // Historical
+	CKM_SKIPJACK_CBC64                      = 0x00001002 // Historical
+	CKM_SKIPJACK_OFB64                      = 0x00001003 // Historical
+	CKM_SKIPJACK_CFB64                      = 0x00001004 // Historical
+	CKM_SKIPJACK_CFB32                      = 0x00001005 // Historical
+	CKM_SKIPJACK_CFB16                      = 0x00001006 // Historical
+	CKM_SKIPJACK_CFB8                       = 0x00001007 // Historical
+	CKM_SKIPJACK_WRAP                       = 0x00001008 // Historical
+	CKM_SKIPJACK_PRIVATE_WRAP               = 0x00001009 // Historical
+	CKM_SKIPJACK_RELAYX                     = 0x0000100a // Historical
+	CKM_KEA_KEY_PAIR_GEN                    = 0x00001010 // Historical
+	CKM_KEA_KEY_DERIVE                      = 0x00001011 // Historical
+	CKM_KEA_DERIVE                          = 0x00001012 // Historical
+	CKM_FORTEZZA_TIMESTAMP                  = 0x00001020 // Historical
+	CKM_BATON_KEY_GEN                       = 0x00001030 // Historical
+	CKM_BATON_ECB128                        = 0x00001031 // Historical
+	CKM_BATON_ECB96                         = 0x00001032 // Historical
+	CKM_BATON_CBC128                        = 0x00001033 // Historical
+	CKM_BATON_COUNTER                       = 0x00001034 // Historical
+	CKM_BATON_SHUFFLE                       = 0x00001035 // Historical
+	CKM_BATON_WRAP                          = 0x00001036 // Historical
 	CKM_ECDSA_KEY_PAIR_GEN                  = 0x00001040 // Deprecated
 	CKM_EC_KEY_PAIR_GEN                     = 0x00001040
 	CKM_ECDSA                               = 0x00001041
@@ -638,12 +775,12 @@ const (
 	CKM_ECMQV_DERIVE                        = 0x00001052
 	CKM_ECDH_AES_KEY_WRAP                   = 0x00001053
 	CKM_RSA_AES_KEY_WRAP                    = 0x00001054
-	CKM_JUNIPER_KEY_GEN                     = 0x00001060
-	CKM_JUNIPER_ECB128                      = 0x00001061
-	CKM_JUNIPER_CBC128                      = 0x00001062
-	CKM_JUNIPER_COUNTER                     = 0x00001063
-	CKM_JUNIPER_SHUFFLE                     = 0x00001064
-	CKM_JUNIPER_WRAP                        = 0x00001065
+	CKM_JUNIPER_KEY_GEN                     = 0x00001060 // Historical
+	CKM_JUNIPER_ECB128                      = 0x00001061 // Historical
+	CKM_JUNIPER_CBC128                      = 0x00001062 // Historical
+	CKM_JUNIPER_COUNTER                     = 0x00001063 // Historical
+	CKM_JUNIPER_SHUFFLE                     = 0x00001064 // Historical
+	CKM_JUNIPER_WRAP                        = 0x00001065 // Historical
 	CKM_FASTHASH                            = 0x00001070
 	CKM_AES_XTS                             = 0x00001071
 	CKM_AES_XTS_KEY_GEN                     = 0x00001072
@@ -694,7 +831,7 @@ const (
 	CKM_DH_PKCS_PARAMETER_GEN               = 0x00002001
 	CKM_X9_42_DH_PARAMETER_GEN              = 0x00002002
 	CKM_DSA_PROBABILISTIC_PARAMETER_GEN     = 0x00002003
-	CKM_DSA_PROBABLISTIC_PARAMETER_GEN      = CKM_DSA_PROBABILISTIC_PARAMETER_GEN
+	CKM_DSA_PROBABLISTIC_PARAMETER_GEN      = CKM_DSA_PROBABILISTIC_PARAMETER_GEN // Depricated
 	CKM_DSA_SHAWE_TAYLOR_PARAMETER_GEN      = 0x00002004
 	CKM_DSA_FIPS_G_GEN                      = 0x00002005
 	CKM_AES_OFB                             = 0x00002104
@@ -702,8 +839,8 @@ const (
 	CKM_AES_CFB8                            = 0x00002106
 	CKM_AES_CFB128                          = 0x00002107
 	CKM_AES_CFB1                            = 0x00002108
-	CKM_AES_KEY_WRAP                        = 0x00002109
-	CKM_AES_KEY_WRAP_PAD                    = 0x0000210A
+	CKM_AES_KEY_WRAP                        = 0x00002109 // WAS: 0x00001090
+	CKM_AES_KEY_WRAP_PAD                    = 0x0000210A // WAS: 0x00001091
 	CKM_AES_KEY_WRAP_KWP                    = 0x0000210B
 	CKM_AES_KEY_WRAP_PKCS7                  = 0x0000210C
 	CKM_RSA_PKCS_TPM_1_1                    = 0x00004001
@@ -805,211 +942,246 @@ const (
 	CKM_TLS12_EXTENDED_MASTER_KEY_DERIVE    = 0x00000056
 	CKM_TLS12_EXTENDED_MASTER_KEY_DERIVE_DH = 0x00000057
 	CKM_VENDOR_DEFINED                      = 0x80000000
-	CKF_HW                                  = 0x00000001
-	CKF_MESSAGE_ENCRYPT                     = 0x00000002
-	CKF_MESSAGE_DECRYPT                     = 0x00000004
-	CKF_MESSAGE_SIGN                        = 0x00000008
-	CKF_MESSAGE_VERIFY                      = 0x00000010
-	CKF_MULTI_MESSAGE                       = 0x00000020
-	CKF_MULTI_MESSGE                        = CKF_MULTI_MESSAGE
-	CKF_FIND_OBJECTS                        = 0x00000040
-	CKF_ENCRYPT                             = 0x00000100
-	CKF_DECRYPT                             = 0x00000200
-	CKF_DIGEST                              = 0x00000400
-	CKF_SIGN                                = 0x00000800
-	CKF_SIGN_RECOVER                        = 0x00001000
-	CKF_VERIFY                              = 0x00002000
-	CKF_VERIFY_RECOVER                      = 0x00004000
-	CKF_GENERATE                            = 0x00008000
-	CKF_GENERATE_KEY_PAIR                   = 0x00010000
-	CKF_WRAP                                = 0x00020000
-	CKF_UNWRAP                              = 0x00040000
-	CKF_DERIVE                              = 0x00080000
-	CKF_EC_F_P                              = 0x00100000
-	CKF_EC_F_2M                             = 0x00200000
-	CKF_EC_ECPARAMETERS                     = 0x00400000
-	CKF_EC_OID                              = 0x00800000
-	CKF_EC_NAMEDCURVE                       = CKF_EC_OID
-	CKF_EC_UNCOMPRESS                       = 0x01000000
-	CKF_EC_COMPRESS                         = 0x02000000
-	CKF_EC_CURVENAME                        = 0x04000000
-	CKF_ENCAPSULATE                         = 0x10000000
-	CKF_DECAPSULATE                         = 0x20000000
-	CKF_EXTENSION                           = 0x80000000
-	CKR_OK                                  = 0x00000000
-	CKR_CANCEL                              = 0x00000001
-	CKR_HOST_MEMORY                         = 0x00000002
-	CKR_SLOT_ID_INVALID                     = 0x00000003
-	CKR_GENERAL_ERROR                       = 0x00000005
-	CKR_FUNCTION_FAILED                     = 0x00000006
-	CKR_ARGUMENTS_BAD                       = 0x00000007
-	CKR_NO_EVENT                            = 0x00000008
-	CKR_NEED_TO_CREATE_THREADS              = 0x00000009
-	CKR_CANT_LOCK                           = 0x0000000A
-	CKR_ATTRIBUTE_READ_ONLY                 = 0x00000010
-	CKR_ATTRIBUTE_SENSITIVE                 = 0x00000011
-	CKR_ATTRIBUTE_TYPE_INVALID              = 0x00000012
-	CKR_ATTRIBUTE_VALUE_INVALID             = 0x00000013
-	CKR_ACTION_PROHIBITED                   = 0x0000001B
-	CKR_DATA_INVALID                        = 0x00000020
-	CKR_DATA_LEN_RANGE                      = 0x00000021
-	CKR_DEVICE_ERROR                        = 0x00000030
-	CKR_DEVICE_MEMORY                       = 0x00000031
-	CKR_DEVICE_REMOVED                      = 0x00000032
-	CKR_ENCRYPTED_DATA_INVALID              = 0x00000040
-	CKR_ENCRYPTED_DATA_LEN_RANGE            = 0x00000041
-	CKR_AEAD_DECRYPT_FAILED                 = 0x00000042
-	CKR_FUNCTION_CANCELED                   = 0x00000050
-	CKR_FUNCTION_NOT_PARALLEL               = 0x00000051
-	CKR_FUNCTION_NOT_SUPPORTED              = 0x00000054
-	CKR_KEY_HANDLE_INVALID                  = 0x00000060
-	CKR_KEY_SIZE_RANGE                      = 0x00000062
-	CKR_KEY_TYPE_INCONSISTENT               = 0x00000063
-	CKR_KEY_NOT_NEEDED                      = 0x00000064
-	CKR_KEY_CHANGED                         = 0x00000065
-	CKR_KEY_NEEDED                          = 0x00000066
-	CKR_KEY_INDIGESTIBLE                    = 0x00000067
-	CKR_KEY_FUNCTION_NOT_PERMITTED          = 0x00000068
-	CKR_KEY_NOT_WRAPPABLE                   = 0x00000069
-	CKR_KEY_UNEXTRACTABLE                   = 0x0000006A
-	CKR_MECHANISM_INVALID                   = 0x00000070
-	CKR_MECHANISM_PARAM_INVALID             = 0x00000071
-	CKR_OBJECT_HANDLE_INVALID               = 0x00000082
-	CKR_OPERATION_ACTIVE                    = 0x00000090
-	CKR_OPERATION_NOT_INITIALIZED           = 0x00000091
-	CKR_PIN_INCORRECT                       = 0x000000A0
-	CKR_PIN_INVALID                         = 0x000000A1
-	CKR_PIN_LEN_RANGE                       = 0x000000A2
-	CKR_PIN_EXPIRED                         = 0x000000A3
-	CKR_PIN_LOCKED                          = 0x000000A4
-	CKR_SESSION_CLOSED                      = 0x000000B0
-	CKR_SESSION_COUNT                       = 0x000000B1
-	CKR_SESSION_HANDLE_INVALID              = 0x000000B3
-	CKR_SESSION_PARALLEL_NOT_SUPPORTED      = 0x000000B4
-	CKR_SESSION_READ_ONLY                   = 0x000000B5
-	CKR_SESSION_EXISTS                      = 0x000000B6
-	CKR_SESSION_READ_ONLY_EXISTS            = 0x000000B7
-	CKR_SESSION_READ_WRITE_SO_EXISTS        = 0x000000B8
-	CKR_SIGNATURE_INVALID                   = 0x000000C0
-	CKR_SIGNATURE_LEN_RANGE                 = 0x000000C1
-	CKR_TEMPLATE_INCOMPLETE                 = 0x000000D0
-	CKR_TEMPLATE_INCONSISTENT               = 0x000000D1
-	CKR_TOKEN_NOT_PRESENT                   = 0x000000E0
-	CKR_TOKEN_NOT_RECOGNIZED                = 0x000000E1
-	CKR_TOKEN_WRITE_PROTECTED               = 0x000000E2
-	CKR_UNWRAPPING_KEY_HANDLE_INVALID       = 0x000000F0
-	CKR_UNWRAPPING_KEY_SIZE_RANGE           = 0x000000F1
-	CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT    = 0x000000F2
-	CKR_USER_ALREADY_LOGGED_IN              = 0x00000100
-	CKR_USER_NOT_LOGGED_IN                  = 0x00000101
-	CKR_USER_PIN_NOT_INITIALIZED            = 0x00000102
-	CKR_USER_TYPE_INVALID                   = 0x00000103
-	CKR_USER_ANOTHER_ALREADY_LOGGED_IN      = 0x00000104
-	CKR_USER_TOO_MANY_TYPES                 = 0x00000105
-	CKR_WRAPPED_KEY_INVALID                 = 0x00000110
-	CKR_WRAPPED_KEY_LEN_RANGE               = 0x00000112
-	CKR_WRAPPING_KEY_HANDLE_INVALID         = 0x00000113
-	CKR_WRAPPING_KEY_SIZE_RANGE             = 0x00000114
-	CKR_WRAPPING_KEY_TYPE_INCONSISTENT      = 0x00000115
-	CKR_RANDOM_SEED_NOT_SUPPORTED           = 0x00000120
-	CKR_RANDOM_NO_RNG                       = 0x00000121
-	CKR_DOMAIN_PARAMS_INVALID               = 0x00000130
-	CKR_CURVE_NOT_SUPPORTED                 = 0x00000140
-	CKR_BUFFER_TOO_SMALL                    = 0x00000150
-	CKR_SAVED_STATE_INVALID                 = 0x00000160
-	CKR_INFORMATION_SENSITIVE               = 0x00000170
-	CKR_STATE_UNSAVEABLE                    = 0x00000180
-	CKR_CRYPTOKI_NOT_INITIALIZED            = 0x00000190
-	CKR_CRYPTOKI_ALREADY_INITIALIZED        = 0x00000191
-	CKR_MUTEX_BAD                           = 0x000001A0
-	CKR_MUTEX_NOT_LOCKED                    = 0x000001A1
-	CKR_NEW_PIN_MODE                        = 0x000001B0
-	CKR_NEXT_OTP                            = 0x000001B1
-	CKR_EXCEEDED_MAX_ITERATIONS             = 0x000001B5
-	CKR_FIPS_SELF_TEST_FAILED               = 0x000001B6
-	CKR_LIBRARY_LOAD_FAILED                 = 0x000001B7
-	CKR_PIN_TOO_WEAK                        = 0x000001B8
-	CKR_PUBLIC_KEY_INVALID                  = 0x000001B9
-	CKR_FUNCTION_REJECTED                   = 0x00000200
-	CKR_TOKEN_RESOURCE_EXCEEDED             = 0x00000201
-	CKR_OPERATION_CANCEL_FAILED             = 0x00000202
-	CKR_KEY_EXHAUSTED                       = 0x00000203
-	CKR_PENDING                             = 0x00000204
-	CKR_SESSION_ASYNC_NOT_SUPPORTED         = 0x00000205
-	CKR_SEED_RANDOM_REQUIRED                = 0x00000206
-	CKR_OPERATION_NOT_VALIDATED             = 0x00000207
-	CKR_TOKEN_NOT_INITIALIZED               = 0x00000208
-	CKR_PARAMETER_SET_NOT_SUPPORTED         = 0x00000209
-	CKR_VENDOR_DEFINED                      = 0x80000000
-	CKF_END_OF_MESSAGE                      = 0x00000001
-	CKF_INTERFACE_FORK_SAFE                 = 0x00000001
-	CKF_LIBRARY_CANT_CREATE_OS_THREADS      = 0x00000001
-	CKF_OS_LOCKING_OK                       = 0x00000002
-	CKF_DONT_BLOCK                          = 1
-	CKG_MGF1_SHA1                           = 0x00000001
-	CKG_MGF1_SHA256                         = 0x00000002
-	CKG_MGF1_SHA384                         = 0x00000003
-	CKG_MGF1_SHA512                         = 0x00000004
-	CKG_MGF1_SHA224                         = 0x00000005
-	CKG_MGF1_SHA3_224                       = 0x00000006
-	CKG_MGF1_SHA3_256                       = 0x00000007
-	CKG_MGF1_SHA3_384                       = 0x00000008
-	CKG_MGF1_SHA3_512                       = 0x00000009
-	CKZ_DATA_SPECIFIED                      = 0x00000001
-	CKD_NULL                                = 0x00000001
-	CKD_SHA1_KDF                            = 0x00000002
-	CKD_SHA1_KDF_ASN1                       = 0x00000003
-	CKD_SHA1_KDF_CONCATENATE                = 0x00000004
-	CKD_SHA224_KDF                          = 0x00000005
-	CKD_SHA256_KDF                          = 0x00000006
-	CKD_SHA384_KDF                          = 0x00000007
-	CKD_SHA512_KDF                          = 0x00000008
-	CKD_CPDIVERSIFY_KDF                     = 0x00000009
-	CKD_SHA3_224_KDF                        = 0x0000000A
-	CKD_SHA3_256_KDF                        = 0x0000000B
-	CKD_SHA3_384_KDF                        = 0x0000000C
-	CKD_SHA3_512_KDF                        = 0x0000000D
-	CKD_SHA1_KDF_SP800                      = 0x0000000E
-	CKD_SHA224_KDF_SP800                    = 0x0000000F
-	CKD_SHA256_KDF_SP800                    = 0x00000010
-	CKD_SHA384_KDF_SP800                    = 0x00000011
-	CKD_SHA512_KDF_SP800                    = 0x00000012
-	CKD_SHA3_224_KDF_SP800                  = 0x00000013
-	CKD_SHA3_256_KDF_SP800                  = 0x00000014
-	CKD_SHA3_384_KDF_SP800                  = 0x00000015
-	CKD_SHA3_512_KDF_SP800                  = 0x00000016
-	CKD_BLAKE2B_160_KDF                     = 0x00000017
-	CKD_BLAKE2B_256_KDF                     = 0x00000018
-	CKD_BLAKE2B_384_KDF                     = 0x00000019
-	CKD_BLAKE2B_512_KDF                     = 0x0000001a
-	CKP_PKCS5_PBKD2_HMAC_SHA1               = 0x00000001
-	CKP_PKCS5_PBKD2_HMAC_GOSTR3411          = 0x00000002
-	CKP_PKCS5_PBKD2_HMAC_SHA224             = 0x00000003
-	CKP_PKCS5_PBKD2_HMAC_SHA256             = 0x00000004
-	CKP_PKCS5_PBKD2_HMAC_SHA384             = 0x00000005
-	CKP_PKCS5_PBKD2_HMAC_SHA512             = 0x00000006
-	CKP_PKCS5_PBKD2_HMAC_SHA512_224         = 0x00000007
-	CKP_PKCS5_PBKD2_HMAC_SHA512_256         = 0x00000008
-	CKZ_SALT_SPECIFIED                      = 0x00000001
-	CK_OTP_VALUE                            = 0
-	CK_OTP_PIN                              = 1
-	CK_OTP_CHALLENGE                        = 2
-	CK_OTP_TIME                             = 3
-	CK_OTP_COUNTER                          = 4
-	CK_OTP_FLAGS                            = 5
-	CK_OTP_OUTPUT_LENGTH                    = 6
-	CK_OTP_OUTPUT_FORMAT                    = 7
-	CKF_NEXT_OTP                            = 0x00000001
-	CKF_EXCLUDE_TIME                        = 0x00000002
-	CKF_EXCLUDE_COUNTER                     = 0x00000004
-	CKF_EXCLUDE_CHALLENGE                   = 0x00000008
-	CKF_EXCLUDE_PIN                         = 0x00000010
-	CKF_USER_FRIENDLY_OTP                   = 0x00000020
-	CKG_NO_GENERATE                         = 0x00000000
-	CKG_GENERATE                            = 0x00000001
-	CKG_GENERATE_COUNTER                    = 0x00000002
-	CKG_GENERATE_RANDOM                     = 0x00000003
-	CKG_GENERATE_COUNTER_XOR                = 0x00000004
+
+	// The flags are defined as follows:
+	//
+	//	Bit Flag               Mask          Meaning
+	CKF_HW = 0x00000001 // performed by HW
+
+	// Specify whether or not a mechanism can be used for a particular task
+	CKF_MESSAGE_ENCRYPT   = 0x00000002
+	CKF_MESSAGE_DECRYPT   = 0x00000004
+	CKF_MESSAGE_SIGN      = 0x00000008
+	CKF_MESSAGE_VERIFY    = 0x00000010
+	CKF_MULTI_MESSAGE     = 0x00000020
+	CKF_MULTI_MESSGE      = CKF_MULTI_MESSAGE
+	CKF_FIND_OBJECTS      = 0x00000040
+	CKF_ENCRYPT           = 0x00000100
+	CKF_DECRYPT           = 0x00000200
+	CKF_DIGEST            = 0x00000400
+	CKF_SIGN              = 0x00000800
+	CKF_SIGN_RECOVER      = 0x00001000
+	CKF_VERIFY            = 0x00002000
+	CKF_VERIFY_RECOVER    = 0x00004000
+	CKF_GENERATE          = 0x00008000
+	CKF_GENERATE_KEY_PAIR = 0x00010000
+	CKF_WRAP              = 0x00020000
+	CKF_UNWRAP            = 0x00040000
+	CKF_DERIVE            = 0x00080000
+
+	// Describe a token's EC capabilities not available in mechanism
+	// information.
+	CKF_EC_F_P          = 0x00100000
+	CKF_EC_F_2M         = 0x00200000
+	CKF_EC_ECPARAMETERS = 0x00400000
+	CKF_EC_OID          = 0x00800000
+	CKF_EC_NAMEDCURVE   = CKF_EC_OID // deprecated since PKCS#11 3.00
+	CKF_EC_UNCOMPRESS   = 0x01000000
+	CKF_EC_COMPRESS     = 0x02000000
+	CKF_EC_CURVENAME    = 0x04000000
+	CKF_ENCAPSULATE     = 0x10000000
+	CKF_DECAPSULATE     = 0x20000000
+	CKF_EXTENSION       = 0x80000000
+
+	CKR_OK                               = 0x00000000
+	CKR_CANCEL                           = 0x00000001
+	CKR_HOST_MEMORY                      = 0x00000002
+	CKR_SLOT_ID_INVALID                  = 0x00000003
+	CKR_GENERAL_ERROR                    = 0x00000005
+	CKR_FUNCTION_FAILED                  = 0x00000006
+	CKR_ARGUMENTS_BAD                    = 0x00000007
+	CKR_NO_EVENT                         = 0x00000008
+	CKR_NEED_TO_CREATE_THREADS           = 0x00000009
+	CKR_CANT_LOCK                        = 0x0000000A
+	CKR_ATTRIBUTE_READ_ONLY              = 0x00000010
+	CKR_ATTRIBUTE_SENSITIVE              = 0x00000011
+	CKR_ATTRIBUTE_TYPE_INVALID           = 0x00000012
+	CKR_ATTRIBUTE_VALUE_INVALID          = 0x00000013
+	CKR_ACTION_PROHIBITED                = 0x0000001B
+	CKR_DATA_INVALID                     = 0x00000020
+	CKR_DATA_LEN_RANGE                   = 0x00000021
+	CKR_DEVICE_ERROR                     = 0x00000030
+	CKR_DEVICE_MEMORY                    = 0x00000031
+	CKR_DEVICE_REMOVED                   = 0x00000032
+	CKR_ENCRYPTED_DATA_INVALID           = 0x00000040
+	CKR_ENCRYPTED_DATA_LEN_RANGE         = 0x00000041
+	CKR_AEAD_DECRYPT_FAILED              = 0x00000042
+	CKR_FUNCTION_CANCELED                = 0x00000050
+	CKR_FUNCTION_NOT_PARALLEL            = 0x00000051
+	CKR_FUNCTION_NOT_SUPPORTED           = 0x00000054
+	CKR_KEY_HANDLE_INVALID               = 0x00000060
+	CKR_KEY_SIZE_RANGE                   = 0x00000062
+	CKR_KEY_TYPE_INCONSISTENT            = 0x00000063
+	CKR_KEY_NOT_NEEDED                   = 0x00000064
+	CKR_KEY_CHANGED                      = 0x00000065
+	CKR_KEY_NEEDED                       = 0x00000066
+	CKR_KEY_INDIGESTIBLE                 = 0x00000067
+	CKR_KEY_FUNCTION_NOT_PERMITTED       = 0x00000068
+	CKR_KEY_NOT_WRAPPABLE                = 0x00000069
+	CKR_KEY_UNEXTRACTABLE                = 0x0000006A
+	CKR_MECHANISM_INVALID                = 0x00000070
+	CKR_MECHANISM_PARAM_INVALID          = 0x00000071
+	CKR_OBJECT_HANDLE_INVALID            = 0x00000082
+	CKR_OPERATION_ACTIVE                 = 0x00000090
+	CKR_OPERATION_NOT_INITIALIZED        = 0x00000091
+	CKR_PIN_INCORRECT                    = 0x000000A0
+	CKR_PIN_INVALID                      = 0x000000A1
+	CKR_PIN_LEN_RANGE                    = 0x000000A2
+	CKR_PIN_EXPIRED                      = 0x000000A3
+	CKR_PIN_LOCKED                       = 0x000000A4
+	CKR_SESSION_CLOSED                   = 0x000000B0
+	CKR_SESSION_COUNT                    = 0x000000B1
+	CKR_SESSION_HANDLE_INVALID           = 0x000000B3
+	CKR_SESSION_PARALLEL_NOT_SUPPORTED   = 0x000000B4
+	CKR_SESSION_READ_ONLY                = 0x000000B5
+	CKR_SESSION_EXISTS                   = 0x000000B6
+	CKR_SESSION_READ_ONLY_EXISTS         = 0x000000B7
+	CKR_SESSION_READ_WRITE_SO_EXISTS     = 0x000000B8
+	CKR_SIGNATURE_INVALID                = 0x000000C0
+	CKR_SIGNATURE_LEN_RANGE              = 0x000000C1
+	CKR_TEMPLATE_INCOMPLETE              = 0x000000D0
+	CKR_TEMPLATE_INCONSISTENT            = 0x000000D1
+	CKR_TOKEN_NOT_PRESENT                = 0x000000E0
+	CKR_TOKEN_NOT_RECOGNIZED             = 0x000000E1
+	CKR_TOKEN_WRITE_PROTECTED            = 0x000000E2
+	CKR_UNWRAPPING_KEY_HANDLE_INVALID    = 0x000000F0
+	CKR_UNWRAPPING_KEY_SIZE_RANGE        = 0x000000F1
+	CKR_UNWRAPPING_KEY_TYPE_INCONSISTENT = 0x000000F2
+	CKR_USER_ALREADY_LOGGED_IN           = 0x00000100
+	CKR_USER_NOT_LOGGED_IN               = 0x00000101
+	CKR_USER_PIN_NOT_INITIALIZED         = 0x00000102
+	CKR_USER_TYPE_INVALID                = 0x00000103
+	CKR_USER_ANOTHER_ALREADY_LOGGED_IN   = 0x00000104
+	CKR_USER_TOO_MANY_TYPES              = 0x00000105
+	CKR_WRAPPED_KEY_INVALID              = 0x00000110
+	CKR_WRAPPED_KEY_LEN_RANGE            = 0x00000112
+	CKR_WRAPPING_KEY_HANDLE_INVALID      = 0x00000113
+	CKR_WRAPPING_KEY_SIZE_RANGE          = 0x00000114
+	CKR_WRAPPING_KEY_TYPE_INCONSISTENT   = 0x00000115
+	CKR_RANDOM_SEED_NOT_SUPPORTED        = 0x00000120
+	CKR_RANDOM_NO_RNG                    = 0x00000121
+	CKR_DOMAIN_PARAMS_INVALID            = 0x00000130
+	CKR_CURVE_NOT_SUPPORTED              = 0x00000140
+	CKR_BUFFER_TOO_SMALL                 = 0x00000150
+	CKR_SAVED_STATE_INVALID              = 0x00000160
+	CKR_INFORMATION_SENSITIVE            = 0x00000170
+	CKR_STATE_UNSAVEABLE                 = 0x00000180
+	CKR_CRYPTOKI_NOT_INITIALIZED         = 0x00000190
+	CKR_CRYPTOKI_ALREADY_INITIALIZED     = 0x00000191
+	CKR_MUTEX_BAD                        = 0x000001A0
+	CKR_MUTEX_NOT_LOCKED                 = 0x000001A1
+	CKR_NEW_PIN_MODE                     = 0x000001B0
+	CKR_NEXT_OTP                         = 0x000001B1
+	CKR_EXCEEDED_MAX_ITERATIONS          = 0x000001B5
+	CKR_FIPS_SELF_TEST_FAILED            = 0x000001B6
+	CKR_LIBRARY_LOAD_FAILED              = 0x000001B7
+	CKR_PIN_TOO_WEAK                     = 0x000001B8
+	CKR_PUBLIC_KEY_INVALID               = 0x000001B9
+	CKR_FUNCTION_REJECTED                = 0x00000200
+	CKR_TOKEN_RESOURCE_EXCEEDED          = 0x00000201
+	CKR_OPERATION_CANCEL_FAILED          = 0x00000202
+	CKR_KEY_EXHAUSTED                    = 0x00000203
+	CKR_PENDING                          = 0x00000204
+	CKR_SESSION_ASYNC_NOT_SUPPORTED      = 0x00000205
+	CKR_SEED_RANDOM_REQUIRED             = 0x00000206
+	CKR_OPERATION_NOT_VALIDATED          = 0x00000207
+	CKR_TOKEN_NOT_INITIALIZED            = 0x00000208
+	CKR_PARAMETER_SET_NOT_SUPPORTED      = 0x00000209
+	CKR_VENDOR_DEFINED                   = 0x80000000
+
+	CKF_END_OF_MESSAGE = 0x00000001
+
+	// Get functionlist flags
+	CKF_INTERFACE_FORK_SAFE = 0x00000001
+
+	// flags: bit flags that provide capabilities of the slot
+	//
+	//	Bit Flag                           Mask       Meaning
+	CKF_LIBRARY_CANT_CREATE_OS_THREADS = 0x00000001
+	CKF_OS_LOCKING_OK                  = 0x00000002
+
+	// additional flags for parameters to functions
+	// CKF_DONT_BLOCK is for the function C_WaitForSlotEvent
+	CKF_DONT_BLOCK = 1
+
+	// The following MGFs are defined
+	CKG_MGF1_SHA1     = 0x00000001
+	CKG_MGF1_SHA256   = 0x00000002
+	CKG_MGF1_SHA384   = 0x00000003
+	CKG_MGF1_SHA512   = 0x00000004
+	CKG_MGF1_SHA224   = 0x00000005
+	CKG_MGF1_SHA3_224 = 0x00000006
+	CKG_MGF1_SHA3_256 = 0x00000007
+	CKG_MGF1_SHA3_384 = 0x00000008
+	CKG_MGF1_SHA3_512 = 0x00000009
+
+	// The following encoding parameter sources are defined
+	CKZ_DATA_SPECIFIED = 0x00000001
+
+	// The following EC Key Derivation Functions are defined
+	CKD_NULL     = 0x00000001
+	CKD_SHA1_KDF = 0x00000002
+
+	// The following X9.42 DH key derivation functions are defined
+	CKD_SHA1_KDF_ASN1        = 0x00000003
+	CKD_SHA1_KDF_CONCATENATE = 0x00000004
+	CKD_SHA224_KDF           = 0x00000005
+	CKD_SHA256_KDF           = 0x00000006
+	CKD_SHA384_KDF           = 0x00000007
+	CKD_SHA512_KDF           = 0x00000008
+	CKD_CPDIVERSIFY_KDF      = 0x00000009
+	CKD_SHA3_224_KDF         = 0x0000000A
+	CKD_SHA3_256_KDF         = 0x0000000B
+	CKD_SHA3_384_KDF         = 0x0000000C
+	CKD_SHA3_512_KDF         = 0x0000000D
+	CKD_SHA1_KDF_SP800       = 0x0000000E
+	CKD_SHA224_KDF_SP800     = 0x0000000F
+	CKD_SHA256_KDF_SP800     = 0x00000010
+	CKD_SHA384_KDF_SP800     = 0x00000011
+	CKD_SHA512_KDF_SP800     = 0x00000012
+	CKD_SHA3_224_KDF_SP800   = 0x00000013
+	CKD_SHA3_256_KDF_SP800   = 0x00000014
+	CKD_SHA3_384_KDF_SP800   = 0x00000015
+	CKD_SHA3_512_KDF_SP800   = 0x00000016
+	CKD_BLAKE2B_160_KDF      = 0x00000017
+	CKD_BLAKE2B_256_KDF      = 0x00000018
+	CKD_BLAKE2B_384_KDF      = 0x00000019
+	CKD_BLAKE2B_512_KDF      = 0x0000001a
+
+	CKP_PKCS5_PBKD2_HMAC_SHA1       = 0x00000001
+	CKP_PKCS5_PBKD2_HMAC_GOSTR3411  = 0x00000002
+	CKP_PKCS5_PBKD2_HMAC_SHA224     = 0x00000003
+	CKP_PKCS5_PBKD2_HMAC_SHA256     = 0x00000004
+	CKP_PKCS5_PBKD2_HMAC_SHA384     = 0x00000005
+	CKP_PKCS5_PBKD2_HMAC_SHA512     = 0x00000006
+	CKP_PKCS5_PBKD2_HMAC_SHA512_224 = 0x00000007
+	CKP_PKCS5_PBKD2_HMAC_SHA512_256 = 0x00000008
+
+	// The following salt value sources are defined in PKCS #5 v2.0.
+	CKZ_SALT_SPECIFIED = 0x00000001
+
+	CK_OTP_VALUE         = 0
+	CK_OTP_PIN           = 1
+	CK_OTP_CHALLENGE     = 2
+	CK_OTP_TIME          = 3
+	CK_OTP_COUNTER       = 4
+	CK_OTP_FLAGS         = 5
+	CK_OTP_OUTPUT_LENGTH = 6
+	CK_OTP_OUTPUT_FORMAT = 7
+
+	CKF_NEXT_OTP          = 0x00000001
+	CKF_EXCLUDE_TIME      = 0x00000002
+	CKF_EXCLUDE_COUNTER   = 0x00000004
+	CKF_EXCLUDE_CHALLENGE = 0x00000008
+	CKF_EXCLUDE_PIN       = 0x00000010
+	CKF_USER_FRIENDLY_OTP = 0x00000020
+
+	CKG_NO_GENERATE          = 0x00000000
+	CKG_GENERATE             = 0x00000001
+	CKG_GENERATE_COUNTER     = 0x00000002
+	CKG_GENERATE_RANDOM      = 0x00000003
+	CKG_GENERATE_COUNTER_XOR = 0x00000004
+
 	CK_SP800_108_ITERATION_VARIABLE         = 0x00000001
 	CK_SP800_108_OPTIONAL_COUNTER           = 0x00000002
 	CK_SP800_108_DKM_LENGTH                 = 0x00000003
@@ -1018,42 +1190,48 @@ const (
 	CK_SP800_108_KEY_HANDLE                 = 0x00000005
 	CK_SP800_108_DKM_LENGTH_SUM_OF_KEYS     = 0x00000001
 	CK_SP800_108_DKM_LENGTH_SUM_OF_SEGMENTS = 0x00000002
-	CKF_HKDF_SALT_NULL                      = 0x00000001
-	CKF_HKDF_SALT_DATA                      = 0x00000002
-	CKF_HKDF_SALT_KEY                       = 0x00000004
-	CKS_LAST_VALIDATION_OK                  = 0x00000001
-	CKV_AUTHORITY_TYPE_UNSPECIFIED          = 0x00000000
-	CKV_AUTHORITY_TYPE_NIST_CMVP            = 0x00000001
-	CKV_AUTHORITY_TYPE_COMMON_CRITERIA      = 0x00000002
-	CKV_TYPE_UNSPECIFIED                    = 0x00000000
-	CKV_TYPE_SOFTWARE                       = 0x00000001
-	CKV_TYPE_HARDWARE                       = 0x00000002
-	CKV_TYPE_FIRMWARE                       = 0x00000003
-	CKV_TYPE_HYBRID                         = 0x00000004
-	CKH_HEDGE_PREFERRED                     = 0x00000000
-	CKH_HEDGE_REQUIRED                      = 0x00000001
-	CKH_DETERMINISTIC_REQUIRED              = 0x00000002
-	CKP_ML_DSA_44                           = 0x00000001
-	CKP_ML_DSA_65                           = 0x00000002
-	CKP_ML_DSA_87                           = 0x00000003
-	CKP_SLH_DSA_SHA2_128S                   = 0x00000001
-	CKP_SLH_DSA_SHAKE_128S                  = 0x00000002
-	CKP_SLH_DSA_SHA2_128F                   = 0x00000003
-	CKP_SLH_DSA_SHAKE_128F                  = 0x00000004
-	CKP_SLH_DSA_SHA2_192S                   = 0x00000005
-	CKP_SLH_DSA_SHAKE_192S                  = 0x00000006
-	CKP_SLH_DSA_SHA2_192F                   = 0x00000007
-	CKP_SLH_DSA_SHAKE_192F                  = 0x00000008
-	CKP_SLH_DSA_SHA2_256S                   = 0x00000009
-	CKP_SLH_DSA_SHAKE_256S                  = 0x0000000a
-	CKP_SLH_DSA_SHA2_256F                   = 0x0000000b
-	CKP_SLH_DSA_SHAKE_256F                  = 0x0000000c
-	CKP_ML_KEM_512                          = 0x00000001
-	CKP_ML_KEM_768                          = 0x00000002
-	CKP_ML_KEM_1024                         = 0x00000003
-	CKT_TRUST_UNKNOWN                       = 0x00000000
-	CKT_TRUSTED                             = 0x00000001
-	CKT_TRUST_ANCHOR                        = 0x00000002
-	CKT_NOT_TRUSTED                         = 0x00000003
-	CKT_TRUST_MUST_VERIFY_TRUST             = 0x00000004
+
+	CKF_HKDF_SALT_NULL = 0x00000001
+	CKF_HKDF_SALT_DATA = 0x00000002
+	CKF_HKDF_SALT_KEY  = 0x00000004
+
+	CKS_LAST_VALIDATION_OK = 0x00000001
+
+	CKV_AUTHORITY_TYPE_UNSPECIFIED     = 0x00000000
+	CKV_AUTHORITY_TYPE_NIST_CMVP       = 0x00000001
+	CKV_AUTHORITY_TYPE_COMMON_CRITERIA = 0x00000002
+	CKV_TYPE_UNSPECIFIED               = 0x00000000
+	CKV_TYPE_SOFTWARE                  = 0x00000001
+	CKV_TYPE_HARDWARE                  = 0x00000002
+	CKV_TYPE_FIRMWARE                  = 0x00000003
+	CKV_TYPE_HYBRID                    = 0x00000004
+
+	CKH_HEDGE_PREFERRED        = 0x00000000
+	CKH_HEDGE_REQUIRED         = 0x00000001
+	CKH_DETERMINISTIC_REQUIRED = 0x00000002
+
+	CKP_ML_DSA_44          = 0x00000001
+	CKP_ML_DSA_65          = 0x00000002
+	CKP_ML_DSA_87          = 0x00000003
+	CKP_SLH_DSA_SHA2_128S  = 0x00000001
+	CKP_SLH_DSA_SHAKE_128S = 0x00000002
+	CKP_SLH_DSA_SHA2_128F  = 0x00000003
+	CKP_SLH_DSA_SHAKE_128F = 0x00000004
+	CKP_SLH_DSA_SHA2_192S  = 0x00000005
+	CKP_SLH_DSA_SHAKE_192S = 0x00000006
+	CKP_SLH_DSA_SHA2_192F  = 0x00000007
+	CKP_SLH_DSA_SHAKE_192F = 0x00000008
+	CKP_SLH_DSA_SHA2_256S  = 0x00000009
+	CKP_SLH_DSA_SHAKE_256S = 0x0000000a
+	CKP_SLH_DSA_SHA2_256F  = 0x0000000b
+	CKP_SLH_DSA_SHAKE_256F = 0x0000000c
+	CKP_ML_KEM_512         = 0x00000001
+	CKP_ML_KEM_768         = 0x00000002
+	CKP_ML_KEM_1024        = 0x00000003
+
+	CKT_TRUST_UNKNOWN           = 0x00000000
+	CKT_TRUSTED                 = 0x00000001
+	CKT_TRUST_ANCHOR            = 0x00000002
+	CKT_NOT_TRUSTED             = 0x00000003
+	CKT_TRUST_MUST_VERIFY_TRUST = 0x00000004
 )
