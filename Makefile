@@ -8,9 +8,9 @@
 OASIS_COMMIT := 858bfc8b93ded02a40886e2321240b5978e1aa42
 OASIS := https://raw.githubusercontent.com/oasis-tcs/pkcs11/$(OASIS_COMMIT)/published/3-02
 
-.PHONY: all headers generate test integration integration-v32 clean-headers
+.PHONY: all headers generate build test integration integration-v32 clean-headers
 
-all: headers generate test
+all: headers generate build test
 
 # ── Download official OASIS headers ──────────────────────────────────────────
 headers: pkcs11t.h pkcs11f.h pkcs11.h
@@ -37,6 +37,10 @@ refresh-headers:
 # Must be re-run after `make headers` or `make refresh-headers`.
 generate:
 	go generate ./...
+
+# ── Build ────────────────────────────────────────────────────────────────────
+build:
+	go build ./...
 
 # ── Tests ────────────────────────────────────────────────────────────────────
 test:
