@@ -18,16 +18,19 @@ The folowing diagrams help understand the architecture of this library.
 
 ## PKCS#11 v3.2 support
 
-This fork extends the upstream library with support for PKCS#11 v3.2, including:
+Project `miekg/pkcs11` supports [PKCS#11 v3.2](https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.html), including:
 
-- `C_EncapsulateKey` / `C_DecapsulateKey` — KEM operations (§5.19)
+- `C_EncapsulateKey` / `C_DecapsulateKey` — KEM operations (§5.18.8 & §5.18.9)
 - ML-KEM key generation, encapsulation and decapsulation (`CKM_ML_KEM_KEY_PAIR_GEN`, `CKM_ML_KEM`)
 - New constants: `CKK_ML_KEM`, `CKP_ML_KEM_512/768/1024`, `CKA_ENCAPSULATE`, `CKA_DECAPSULATE`, `CKA_PARAMETER_SET`, `CKF_ENCAPSULATE`, `CKF_DECAPSULATE`
 
 ## SoftHSMv3 - A Software HSM that implements PKCS#11 v3.2
 
-Integration tests require [SoftHSMv3 by PQCToday](https://github.com/pqctoday/softhsm), a software
+Integration tests require HSM compliant with PKCS#11 v3.2.
+[SoftHSMv3 by PQCToday](https://github.com/pqctoday/softhsm) is a software
 HSM compliant with PKCS#11 v3.2.
+
+> Note: As of april 2026, https://github.com/softhsm/SoftHSMv2 is not compatible with PKCS#11 v3.2.
 
 No manual token setup is needed — `TestMain` creates an ephemeral token via the PKCS#11 API
 (`C_InitToken` / `C_InitPIN`) in a temporary directory and cleans it up after the run.
