@@ -96,7 +96,7 @@ func requireMechanism(t *testing.T, ctx *Ctx, slot, mech uint) {
 	t.Skipf("mechanism 0x%08X not supported by token — skipping", mech)
 }
 
-// ── ML-KEM (FIPS 203 / PKCS #11 v3.2 §5.19) ──────────────────────────────────
+// ── ML-KEM (FIPS 203 / PKCS #11 v3.2 §6.68) ──────────────────────────────────
 
 // TestPQCMLKEM exercises the full ML-KEM-768 round-trip:
 // key-pair generation → encapsulation → decapsulation → shared-secret equality.
@@ -185,7 +185,7 @@ func TestPQCMLKEM(t *testing.T) {
 	t.Logf("ML-KEM-768 shared secret (%d bytes) matches", len(encapAttr[0].Value))
 }
 
-// ── ML-DSA (FIPS 204 / PKCS #11 v3.2 §6.x) ───────────────────────────────────
+// ── ML-DSA (FIPS 204 / PKCS #11 v3.2 §6.67) ──────────────────────────────────
 
 // TestPQCMLDSA exercises the ML-DSA-65 sign / verify round-trip using the
 // standard C_Sign / C_Verify path.
@@ -246,7 +246,7 @@ func TestPQCMLDSA(t *testing.T) {
 	t.Log("ML-DSA-65 signature verified")
 }
 
-// ── SLH-DSA (FIPS 205 / PKCS #11 v3.2 §6.x) ──────────────────────────────────
+// ── SLH-DSA (FIPS 205 / PKCS #11 v3.2 §6.69) ─────────────────────────────────
 
 // TestPQCSLHDSA exercises the SLH-DSA-SHA2-128s sign / verify round-trip.
 //
@@ -561,7 +561,7 @@ func skippedTestV32AuthenticatedWrap(t *testing.T) {
 	t.Logf("wrong AAD correctly rejected: %v", err)
 }
 
-// ── Session validation flags (PKCS #11 v3.2 §5.8.4) ──────────────────────────
+// ── Session validation flags (PKCS #11 v3.2 §5.6.11) ─────────────────────────
 
 // TestV32GetSessionValidationFlags exercises C_GetSessionValidationFlags, a
 // new v3.2 API that lets callers query whether the last cryptographic operation
@@ -622,7 +622,7 @@ func TestV32GetSessionValidationFlags(t *testing.T) {
 		flags, flags&CKS_LAST_VALIDATION_OK != 0)
 }
 
-// ── PQC key attribute readback (PKCS #11 v3.2 §6.x) ──────────────────────────
+// ── PQC key attribute readback (PKCS #11 v3.2 §6.67–§6.69) ───────────────────
 
 // TestV32PQCParamSetReadback verifies that CKA_PARAMETER_SET is correctly
 // stored and returned by C_GetAttributeValue after PQC key generation.

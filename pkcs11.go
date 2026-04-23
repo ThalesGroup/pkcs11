@@ -1803,7 +1803,7 @@ func (c *Ctx) waitForSlotEventHelper(f uint, sl chan SlotEvent) {
 // All methods return ErrFunctionNotSupported when called against a token that
 // does not advertise a v3.2 interface via C_GetInterface.
 
-// EncapsulateKey performs KEM encapsulation (PKCS #11 v3.2 §5.19.1).
+// EncapsulateKey performs KEM encapsulation (PKCS #11 v3.2 §5.18.8).
 // Returns the ciphertext and a handle to the newly derived shared-secret key.
 //   - ciphertext: the KEM ciphertext to be sent to the recipient
 //   - key:        handle to the newly derived shared-secret key object
@@ -1843,7 +1843,7 @@ func (c *Ctx) EncapsulateKey(sh SessionHandle, m []*Mechanism, pubKey ObjectHand
 	return ct[:ctLen], ObjectHandle(phKey), nil
 }
 
-// DecapsulateKey performs KEM decapsulation (PKCS #11 v3.2 §5.19.2).
+// DecapsulateKey performs KEM decapsulation (PKCS #11 v3.2 §5.18.9).
 // Returns a handle to the recovered shared-secret key.
 func (c *Ctx) DecapsulateKey(sh SessionHandle, m []*Mechanism, privKey ObjectHandle, attrs []*Attribute, ciphertext []byte) (ObjectHandle, error) {
 	mecharena, mech := cMechanism(m)
@@ -1891,7 +1891,7 @@ func (c *Ctx) VerifySignatureFinal(sh SessionHandle) error {
 }
 
 // GetSessionValidationFlags queries the FIPS validation status of the last
-// operation on this session (v3.2 §5.8.4).
+// operation on this session (v3.2 §5.6.11).
 // Pass CKS_LAST_VALIDATION_OK to check whether the last operation was validated.
 func (c *Ctx) GetSessionValidationFlags(sh SessionHandle, flagType uint) (uint, error) {
 	var flags C.CK_FLAGS
@@ -1970,7 +1970,7 @@ func (c *Ctx) UnwrapKeyAuthenticated(sh SessionHandle, m []*Mechanism, unwrappin
 	return ObjectHandle(phKey), toError(rv)
 }
 
-// AsyncComplete retrieves the result of a completed async operation (v3.2 §5.20).
+// AsyncComplete retrieves the result of a completed async operation (v3.2 §5.21).
 // functionName is the PKCS #11 function name that was called asynchronously,
 // e.g. "C_Sign". Returns CKR_PENDING if the operation has not finished yet.
 func (c *Ctx) AsyncComplete(sh SessionHandle, functionName string) ([]byte, error) {
@@ -1992,7 +1992,7 @@ func (c *Ctx) AsyncComplete(sh SessionHandle, functionName string) ([]byte, erro
 }
 
 // AsyncGetID retrieves the persistent ID of an in-flight async operation
-// (v3.2 §5.20). functionName is the PKCS #11 function name, e.g. "C_Sign".
+// (v3.2 §5.21). functionName is the PKCS #11 function name, e.g. "C_Sign".
 func (c *Ctx) AsyncGetID(sh SessionHandle, functionName string) (uint, error) {
 	fname := C.CString(functionName)
 	defer C.free(unsafe.Pointer(fname))
@@ -2006,7 +2006,7 @@ func (c *Ctx) AsyncGetID(sh SessionHandle, functionName string) (uint, error) {
 	return uint(id), nil
 }
 
-// AsyncJoin re-attaches a session to a persistent async operation (v3.2 §5.20).
+// AsyncJoin re-attaches a session to a persistent async operation (v3.2 §5.21).
 // functionName and id identify the operation; pass nil for data if not needed.
 func (c *Ctx) AsyncJoin(sh SessionHandle, functionName string, id uint, data []byte) error {
 	fname := C.CString(functionName)
