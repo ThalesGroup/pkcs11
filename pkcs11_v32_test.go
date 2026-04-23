@@ -448,7 +448,7 @@ func TestV32StatelessVerify(t *testing.T) {
 // AES-256 KEK (key-encryption key) using AES-GCM with additional
 // authenticated data, then unwraps it and verifies the key value is preserved.
 //nolint:unused
-func skippedTestV32AuthenticatedWrap(t *testing.T) {
+func TestV32AuthenticatedWrap(t *testing.T) {
 	ctx, sh, slot := v32Setup(t)
 	defer v32Teardown(ctx, sh)
 
