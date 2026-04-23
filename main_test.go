@@ -22,8 +22,8 @@ import (
 //   - v3.2 / PQC tests (ML-KEM, ML-DSA, …)          — skip when the token
 //     does not advertise the required mechanism
 //
-// Recommended module: https://github.com/pqctoday/softhsmv3 (supports both
-// v2.4 and v3.2).
+// Recommended module: softhsmv3 from https://github.com/pqctoday/pqctoday-hsm
+// (supports both v2.4 and v3.2).
 // System-installed libsofthsm2.so works too; v3.2 tests will self-skip.
 //
 // No external tools are required: token initialisation is done entirely

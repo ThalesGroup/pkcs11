@@ -1,7 +1,7 @@
 # PKCS#11
 
 This is a Go implementation of the PKCS#11 API. It wraps the library closely, but uses Go idiom where
-it makes sense. It has been tested with [SoftHSMv3 by PQCToday](https://github.com/pqctoday/softhsm).
+it makes sense. It has been tested with [SoftHSMv3 by PQCToday](https://github.com/pqctoday/pqctoday-hsm).
 
 The specification followed is [PKCS #11 Cryptographic Token Interface Version 3.2](https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.html).
 The C headers are fetched from the [OASIS pkcs11 repository](https://github.com/oasis-tcs/pkcs11/tree/pkcs11-3.20/published/3-02)
@@ -27,7 +27,7 @@ Project `miekg/pkcs11` supports [PKCS#11 v3.2](https://docs.oasis-open.org/pkcs1
 ## SoftHSMv3 - A Software HSM that implements PKCS#11 v3.2
 
 Integration tests require HSM compliant with PKCS#11 v3.2.
-[SoftHSMv3 by PQCToday](https://github.com/pqctoday/softhsm) is a software
+[SoftHSMv3 by PQCToday](https://github.com/pqctoday/pqctoday-hsm) is a software
 HSM compliant with PKCS#11 v3.2.
 
 > Note: As of april 2026, https://github.com/softhsm/SoftHSMv2 is not compatible with PKCS#11 v3.2.

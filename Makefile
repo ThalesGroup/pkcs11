@@ -48,7 +48,7 @@ test:
 
 # Integration tests use a single PKCS11_MODULE for both PKCS #11 v2.4 and v3.2.
 #
-# SoftHSMv3 (https://github.com/pqctoday/softhsmv3) is recommended because it
+# SoftHSMv3 (https://github.com/pqctoday/pqctoday-hsm) is recommended because it
 # implements v3.2 while remaining fully backward-compatible with v2.4.
 # System-installed libsofthsm2.so also works; v3.2/PQC tests will self-skip.
 #
@@ -56,16 +56,18 @@ test:
 # PKCS#11 API (C_InitToken / C_InitPIN).
 #
 # Build SoftHSMv3 from source:
-#   git clone https://github.com/pqctoday/softhsmv3
-#   cd softhsmv3
-#   cmake -B build -DCMAKE_BUILD_TYPE=Release
-#   cmake --build build -j$(nproc)
-#
+#   git clone https://github.com/pqctoday/pqctoday-hsm
+#   cd pqctoday-hsm
+#   mkdir build && cd build
+#   cmake .. -DWITH_CRYPTO_BACKEND=openssl -DENABLE_MLKEM=ON -DENABLE_MLDSA=ON
+#   make
+#   make check
+#   
 # Run all integration tests (v2.4 compat + v3.2):
-#   make integration PKCS11_MODULE=$PWD/softhsmv3/build/src/lib/libsofthsmv3.so
+#   make integration PKCS11_MODULE=$PWD/pqctoday-hsm/build/src/lib/libsofthsmv3.so
 #
 # Run only v3.2/PQC tests:
-#   make integration-v32 PKCS11_MODULE=$PWD/softhsmv3/build/src/lib/libsofthsmv3.so
+#   make integration-v32 PKCS11_MODULE=$PWD/pqctoday-hsm/build/src/lib/libsofthsmv3.so
 
 PKCS11_MODULE ?=
 PKCS11_PIN    ?= 1234
