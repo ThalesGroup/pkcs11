@@ -8,30 +8,34 @@ package p11
 
 import "github.com/miekg/pkcs11"
 
-// KEMKeyPair holds the two objects produced by ML-KEM key generation.
-type KEMKeyPair struct {
-	Public  PublicKey
-	Private PrivateKey
-}
-
 // PublicKey is an Object representing a public key. Since any object can be cast to a
 // PublicKey, it is the user's responsibility to ensure that the object is
 // actually a public key. For instance, if you use a FindObjects template that
 // includes CKA_CLASS: CKO_PUBLIC_KEY, you can be confident the resulting object
 // is a public key.
+// For ML-KEM, public key is the encapsulation key.
 type PublicKey Object
 
 // PrivateKey is an Object representing a private key. Since any object can be cast to a
 // PrivateKey, it is the user's responsibility to ensure that the object is
 // actually a private key.
+// For ML-KEM, private key is the decapsulation key.
 type PrivateKey Object
 
+// KEMKeyPair holds the two objects produced by ML-KEM key generation:
+//   - encapsulation key is public
+//   - decapsulation key is private
+type KEMKeyPair struct {
+	EncapsPubKey  PublicKey
+	DecapsPrivKey PrivateKey
+}
+
 // Decrypt decrypts the input with a given mechanism.
-func (priv PrivateKey) Decrypt(mechanism pkcs11.Mechanism, ciphertext []byte) ([]byte, error) {
-	s := priv.session
+func (privK PrivateKey) Decrypt(mechanism pkcs11.Mechanism, ciphertext []byte) ([]byte, error) {
+	s := privK.session
 	s.Lock()
 	defer s.Unlock()
-	err := s.ctx.DecryptInit(s.handle, []*pkcs11.Mechanism{&mechanism}, priv.objectHandle)
+	err := s.ctx.DecryptInit(s.handle, []*pkcs11.Mechanism{&mechanism}, privK.objectHandle)
 	if err != nil {
 		return nil, err
 	}
@@ -43,11 +47,11 @@ func (priv PrivateKey) Decrypt(mechanism pkcs11.Mechanism, ciphertext []byte) ([
 }
 
 // Sign signs the input with a given mechanism.
-func (priv PrivateKey) Sign(mechanism pkcs11.Mechanism, message []byte) ([]byte, error) {
-	s := priv.session
+func (privK PrivateKey) Sign(mechanism pkcs11.Mechanism, message []byte) ([]byte, error) {
+	s := privK.session
 	s.Lock()
 	defer s.Unlock()
-	err := s.ctx.SignInit(s.handle, []*pkcs11.Mechanism{&mechanism}, priv.objectHandle)
+	err := s.ctx.SignInit(s.handle, []*pkcs11.Mechanism{&mechanism}, privK.objectHandle)
 	if err != nil {
 		return nil, err
 	}
@@ -58,11 +62,11 @@ func (priv PrivateKey) Sign(mechanism pkcs11.Mechanism, message []byte) ([]byte,
 	return out, nil
 }
 
-func (priv PrivateKey) deriveInner(mechanism pkcs11.Mechanism, attributes []*pkcs11.Attribute) (*Object, error) {
-	s := priv.session
+func (privK PrivateKey) deriveInner(mechanism pkcs11.Mechanism, attributes []*pkcs11.Attribute) (*Object, error) {
+	s := privK.session
 	s.Lock()
 	defer s.Unlock()
-	objectHandle, err := s.ctx.DeriveKey(s.handle, []*pkcs11.Mechanism{&mechanism}, priv.objectHandle, attributes)
+	objectHandle, err := s.ctx.DeriveKey(s.handle, []*pkcs11.Mechanism{&mechanism}, privK.objectHandle, attributes)
 	if err != nil {
 		return nil, err
 	}
@@ -75,8 +79,8 @@ func (priv PrivateKey) deriveInner(mechanism pkcs11.Mechanism, attributes []*pkc
 }
 
 // Derive derives a shared secret with a given mechanism.
-func (priv PrivateKey) Derive(mechanism pkcs11.Mechanism, attributes []*pkcs11.Attribute) ([]byte, error) {
-	sharedObj, err := priv.deriveInner(mechanism, attributes)
+func (privK PrivateKey) Derive(mechanism pkcs11.Mechanism, attributes []*pkcs11.Attribute) ([]byte, error) {
+	sharedObj, err := privK.deriveInner(mechanism, attributes)
 	if err != nil {
 		return nil, err
 	}
@@ -90,11 +94,11 @@ func (priv PrivateKey) Derive(mechanism pkcs11.Mechanism, attributes []*pkcs11.A
 }
 
 // Verify verifies a signature over a message with a given mechanism.
-func (pub PublicKey) Verify(mechanism pkcs11.Mechanism, message, signature []byte) error {
-	s := pub.session
+func (pubK PublicKey) Verify(mechanism pkcs11.Mechanism, message, signature []byte) error {
+	s := pubK.session
 	s.Lock()
 	defer s.Unlock()
-	err := s.ctx.VerifyInit(s.handle, []*pkcs11.Mechanism{&mechanism}, pub.objectHandle)
+	err := s.ctx.VerifyInit(s.handle, []*pkcs11.Mechanism{&mechanism}, pubK.objectHandle)
 	if err != nil {
 		return err
 	}
@@ -105,7 +109,23 @@ func (pub PublicKey) Verify(mechanism pkcs11.Mechanism, message, signature []byt
 	return nil
 }
 
-// Encapsulate performs ML-KEM key encapsulation (PKCS #11 v3.2 §5.19.1).
+// Encrypt encrypts a plaintext with a given mechanism.
+func (pubK PublicKey) Encrypt(mechanism pkcs11.Mechanism, plaintext []byte) ([]byte, error) {
+	s := pubK.session
+	s.Lock()
+	defer s.Unlock()
+	err := s.ctx.EncryptInit(s.handle, []*pkcs11.Mechanism{&mechanism}, pubK.objectHandle)
+	if err != nil {
+		return nil, err
+	}
+	out, err := s.ctx.Encrypt(s.handle, plaintext)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Encapsulate performs ML-KEM key encapsulation (PKCS #11 v3.2 §5.18.8).
 //
 // The token generates a random shared secret, encrypts it under the public key,
 // and returns:
@@ -121,13 +141,13 @@ func (pub PublicKey) Verify(mechanism pkcs11.Mechanism, message, signature []byt
 //	    pkcs11.NewAttribute(pkcs11.CKA_VALUE_LEN, 32),
 //	    pkcs11.NewAttribute(pkcs11.CKA_TOKEN,     false),
 //	}
-func (pub PublicKey) Encapsulate(mechanism pkcs11.Mechanism, derivedKeyTemplate []*pkcs11.Attribute) (ciphertext []byte, sharedSecret SecretKey, err error) {
-	s := pub.session
+func (pubK PublicKey) Encapsulate(mechanism pkcs11.Mechanism, derivedKeyTemplate []*pkcs11.Attribute) (ciphertext []byte, sharedSecret SecretKey, err error) {
+	s := pubK.session
 	s.Lock()
 	defer s.Unlock()
 	ct, handle, err := s.ctx.EncapsulateKey(s.handle,
 		[]*pkcs11.Mechanism{&mechanism},
-		pub.objectHandle,
+		pubK.objectHandle,
 		derivedKeyTemplate)
 	if err != nil {
 		return nil, SecretKey{}, err
@@ -135,19 +155,19 @@ func (pub PublicKey) Encapsulate(mechanism pkcs11.Mechanism, derivedKeyTemplate 
 	return ct, SecretKey(Object{session: s, objectHandle: handle}), nil
 }
 
-// Decapsulate performs ML-KEM key decapsulation (PKCS #11 v3.2 §5.19.2).
+// Decapsulate performs ML-KEM key decapsulation (PKCS #11 v3.2 §5.18.9).
 //
 // The token uses the private key to recover the shared secret from ciphertext
 // and returns a handle to the derived shared-secret key object on the token.
 // derivedKeyTemplate controls the type and attributes of that object; it should
 // match what was passed to Encapsulate on the sender side.
-func (priv PrivateKey) Decapsulate(mechanism pkcs11.Mechanism, ciphertext []byte, derivedKeyTemplate []*pkcs11.Attribute) (SecretKey, error) {
-	s := priv.session
+func (privK PrivateKey) Decapsulate(mechanism pkcs11.Mechanism, ciphertext []byte, derivedKeyTemplate []*pkcs11.Attribute) (SecretKey, error) {
+	s := privK.session
 	s.Lock()
 	defer s.Unlock()
 	handle, err := s.ctx.DecapsulateKey(s.handle,
 		[]*pkcs11.Mechanism{&mechanism},
-		priv.objectHandle,
+		privK.objectHandle,
 		derivedKeyTemplate,
 		ciphertext)
 	if err != nil {
@@ -162,31 +182,15 @@ func (priv PrivateKey) Decapsulate(mechanism pkcs11.Mechanism, ciphertext []byte
 //
 // Use this instead of Verify when the token requires the v3.2 flow, for
 // example with ML-DSA keys on a v3.2-capable token.
-func (pub PublicKey) VerifyStateless(mechanism pkcs11.Mechanism, message, signature []byte) error {
-	s := pub.session
+func (pubK PublicKey) VerifyStateless(mechanism pkcs11.Mechanism, message, signature []byte) error {
+	s := pubK.session
 	s.Lock()
 	defer s.Unlock()
 	if err := s.ctx.VerifySignatureInit(s.handle,
 		[]*pkcs11.Mechanism{&mechanism},
-		pub.objectHandle,
+		pubK.objectHandle,
 		signature); err != nil {
 		return err
 	}
 	return s.ctx.VerifySignature(s.handle, message)
-}
-
-// Encrypt encrypts a plaintext with a given mechanism.
-func (pub PublicKey) Encrypt(mechanism pkcs11.Mechanism, plaintext []byte) ([]byte, error) {
-	s := pub.session
-	s.Lock()
-	defer s.Unlock()
-	err := s.ctx.EncryptInit(s.handle, []*pkcs11.Mechanism{&mechanism}, pub.objectHandle)
-	if err != nil {
-		return nil, err
-	}
-	out, err := s.ctx.Encrypt(s.handle, plaintext)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
