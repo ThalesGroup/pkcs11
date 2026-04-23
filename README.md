@@ -5,7 +5,7 @@ it makes sense. It has been tested with [SoftHSMv3 by PQCToday](https://github.c
 
 The specification followed is [PKCS #11 Cryptographic Token Interface Version 3.2](https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/pkcs11-spec-v3.2.html).
 The C headers are fetched from the [OASIS pkcs11 repository](https://github.com/oasis-tcs/pkcs11/tree/pkcs11-3.20/published/3-02)
-at tag `pkcs11-3.20` (commit `858bfc8b93ded02a40886e2321240b5978e1aa42`) via `make headers`.
+at tag `pkcs11-3.20` (commit [`858bfc8b93ded02a40886e2321240b5978e1aa42`](https://github.com/oasis-tcs/pkcs11/tree/858bfc8b93ded02a40886e2321240b5978e1aa42/published/3-02)) via `make headers`.
 
 ## Overview & Architecture
 
